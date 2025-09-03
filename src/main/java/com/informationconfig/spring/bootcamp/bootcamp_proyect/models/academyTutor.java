@@ -1,8 +1,7 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.models;
 
 
-public class academyTutor extends user {
+public class AcademyTutor extends User {
 
     private String tutorFaculty;
-
 }

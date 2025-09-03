@@ -1,6 +1,6 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.models;
 
-public class logBook {
+public class LogBook {
     
     private String logBookId;
     private String date;

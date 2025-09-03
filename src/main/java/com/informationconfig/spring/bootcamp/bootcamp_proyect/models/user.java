@@ -1,6 +1,6 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.models;
 
-public class user {
+public class User {
 
     private String Id;
     private String Name;

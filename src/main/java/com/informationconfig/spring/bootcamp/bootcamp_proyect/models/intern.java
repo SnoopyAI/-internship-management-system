@@ -1,17 +1,13 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.models;
 
 
-public class intern extends user {
+public class Intern extends User {
 
     private String internUniversity;
     private String internSemester;
-    private Task task[];
-    private LogBook logBook[];
+    private Task[] task;
+    private LogBook[] logBook;
 
-
-    public void setInternPassword(String internPassword) {
-        this.internPassword = internPassword;
-    }
     public String getInternUniversity() {
         return internUniversity;
     }
@@ -24,6 +20,17 @@ public class intern extends user {
     public void setInternSemester(String internSemester) {
         this.internSemester = internSemester;
     }
-
+    public Task[] getTask() {
+        return task;
+    }
+    public void setTask(Task[] task) {
+        this.task = task;
+    }
+    public LogBook[] getLogBook() {
+        return logBook;
+    }
+    public void setLogBook(LogBook[] logBook) {
+        this.logBook = logBook;
+    }
 
 }
