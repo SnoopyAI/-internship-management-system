@@ -5,10 +5,11 @@ public class Task {
     private String taskId;
     private String title;
     private String description;
-    private String status; // e.g., "Pending", "In Progress", "Completed"
-    private String dueDate;
-    private String assignedTo; // User ID of the person assigned to the task
-    private String[] evidence;
+    private String status; // e.g., "To Do", "In Progress", "Done"
+    private String dueDate; // e.g., "2023-12-31"
+    private String[] evidences;
+    private String assingTo;
+
 
     public String getTaskId() {
         return taskId;
@@ -40,26 +41,27 @@ public class Task {
     public void setDueDate(String dueDate) {
         this.dueDate = dueDate;
     }
-    public String getAssignedTo() {
-        return assignedTo;
+    public String[] getEvidences() {
+        return evidences;
     }
-    public void setAssignedTo(String assignedTo) {
-        this.assignedTo = assignedTo;
+    public void setEvidences(String[] evidences) {
+        this.evidences = evidences;
     }
-    public String[] getEvidence() {
-        return evidence;
+    public String getAssingTo() {
+        return assingTo;
     }
-    public void setEvidence(String[] evidence) {
-        this.evidence = evidence;
+    public void setAssingTo(String assingTo) {
+        this.assingTo = assingTo;
     }
+
     public void changeStatus(String newStatus) {
         this.status = newStatus;
     }
-    public void assignedUser(String userId) {
-        this.assignedTo = userId;
+
+    public void uploadEvidence(String[] evidence) {
+        // Logic to upload and attach evidence to the task
+    }   
+    public void assignTask(String userId) {
+        this.assingTo = userId;
     }
-    public void upLoadEvidence(String file) {
-        // Logic to upload evidence
-    }
-    
 }

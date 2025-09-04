@@ -1,6 +1,7 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.models;
 
-public class PerformanceREport {
+public class PerformanceReport {
+    
     private String reportId;
     private String period;
     private String comments;
