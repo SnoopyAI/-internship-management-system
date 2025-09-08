@@ -1,6 +1,6 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.models;
 
-public class List {
+public class Lists {
     
     private String listId;
     private String name;
