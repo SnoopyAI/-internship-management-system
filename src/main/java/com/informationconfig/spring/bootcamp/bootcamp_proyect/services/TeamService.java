@@ -1,39 +1,39 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.services;
 import org.springframework.stereotype.Service;
-import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Intern;    
-import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.InternRepository;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Team;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.TeamRepository;
 import java.util.ArrayList;
 
 @Service
 public class TeamService {
     
-    private final InternRepository internRepository;
+    private final TeamRepository teamRepository;
 
-    public TeamService(InternRepository internRepository) {
-        this.internRepository = internRepository;
+    public TeamService(TeamRepository teamRepository) {
+        this.teamRepository = teamRepository;
     }
 
-    public Intern addIntern(Intern intern) {
-        return internRepository.addIntern(intern);
+    public Team addTeam(Team team) {
+        return teamRepository.addTeam(team);
     }
 
-    public ArrayList<Intern> getAllInterns() {
-        return internRepository.getAllInterns();
+    public ArrayList<Team> getAllTeams() {
+        return teamRepository.getAllTeams();
     }
 
-    public boolean deleteIntern(String id) {
-        return internRepository.deleteIntern(id);
+    public boolean deleteTeam(String id) {
+        return teamRepository.deleteTeam(id);
     }
 
-    public Intern updateIntern(String id, Intern updatedIntern) {
-        return internRepository.updateIntern(id, updatedIntern);
+    public Team updateTeam(String id, Team updatedTeam) {
+        return teamRepository.updateTeam(id, updatedTeam);
     }
 
-    public Intern getInternById(String id) {
-        return internRepository.getInternById(id);
+    public Team getTeamById(String id) {
+        return teamRepository.getTeamById(id);
     }
 
-    public ArrayList<Intern> getAllInterns(ArrayList<Intern> interns) {
-        return internRepository.getAllInterns(interns);
+    public ArrayList<Team> getAllTeams(ArrayList<Team> teams) {
+        return teamRepository.getAllTeams(teams);
     }
 }
