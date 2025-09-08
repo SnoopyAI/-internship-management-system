@@ -6,7 +6,7 @@ public class Board {
     private String name;
     private String description;
     private String startDate;
-    private List[] lists;
+    private Lists[] lists;
     private Intern[] interns;
     private AcademyTutor[] tutors;
 
@@ -34,10 +34,10 @@ public class Board {
     public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
-    public List[] getLists() {
+    public Lists[] getLists() {
         return lists;
     }
-    public void setLists(List[] lists) {
+    public void setLists(Lists[] lists) {
         this.lists = lists;
     }
     public Intern[] getInterns() {
