@@ -30,7 +30,7 @@ public class AcademyTutorRepository {
 
     public AcademyTutor updateAcademyTutor(String id, AcademyTutor updatedAcademyTutor) {
         for (int i = 0; i < academyTutors.size(); i++) {
-            if (academyTutors.get(i).getId().equals(id)) {
+            if (academyTutors.get(i).getId() == id) {
                 academyTutors.set(i, updatedAcademyTutor);
                 return updatedAcademyTutor;
             }
@@ -40,7 +40,7 @@ public class AcademyTutorRepository {
 
     public AcademyTutor getAcademyTutorById(String id) {
         for (AcademyTutor academyTutor : academyTutors) {
-            if (academyTutor.getId().equals(id)) {
+            if (academyTutor.getId() == id) {
                 return academyTutor;
             }
         }

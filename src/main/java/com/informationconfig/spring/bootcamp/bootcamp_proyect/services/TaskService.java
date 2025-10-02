@@ -13,7 +13,8 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public Task addTask(Task task) {
+    public Task addTask(Task task, String tutorId) {
+        task.setCreatedByTutorId(tutorId);
         return taskRepository.addTask(task);
     }
 

@@ -30,7 +30,7 @@ public class CompanyTutorRepository {
 
     public CompanyTutor updateCompanyTutor(String id, CompanyTutor updatedCompanyTutor) {
         for (int i = 0; i < companyTutors.size(); i++) {
-            if (companyTutors.get(i).getId().equals(id)) {
+            if (companyTutors.get(i).getId() == id) {
                 companyTutors.set(i, updatedCompanyTutor);
                 return updatedCompanyTutor;
             }
@@ -40,7 +40,7 @@ public class CompanyTutorRepository {
 
     public CompanyTutor getCompanyTutorById(String id) {
         for (CompanyTutor companyTutor : companyTutors) {
-            if (companyTutor.getId().equals(id)) {
+            if (companyTutor.getId() == id) {
                 return companyTutor;
             }
         }
