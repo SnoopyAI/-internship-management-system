@@ -30,7 +30,7 @@ public class InternRepository {
 
     public Intern updateIntern(String id, Intern updatedIntern) {
         for (int i = 0; i < interns.size(); i++) {
-            if (interns.get(i).getId().equals(id)) {
+            if (interns.get(i).getId() == id) {
                 interns.set(i, updatedIntern);
                 return updatedIntern;
             }
@@ -40,7 +40,7 @@ public class InternRepository {
 
     public Intern getInternById(String id) {
         for (Intern intern : interns) {
-            if (intern.getId().equals(id)) {
+            if (intern.getId() == id) {
                 return intern;
             }
         }

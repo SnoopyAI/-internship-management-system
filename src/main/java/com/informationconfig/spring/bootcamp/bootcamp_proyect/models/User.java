@@ -1,38 +1,59 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.models;
 
-abstract class User {
+import jakarta.persistence.*;
 
-    private String Id;
-    private String Name;
-    private String Email;
-    private String Password;
+@MappedSuperclass
+public abstract class User {
+
+    @Id
+    @Column(name = "ID", unique = true, nullable = false, length = 50)
+    private String id;
+
+    @Column(name = "Name", nullable = false, length = 50)
+    private String name;
+
+    @Column(name = "Email", unique = true, nullable = false, length = 80)
+    private String email;
+
+    @Column(name = "Password", nullable = false, length = 20)
+    private String password;
+
+    //  constructores, getters, setters
+
+    public User() {}
+
+    public User(String id, String name, String email, String password) {}
 
     public String getId() {
-        return Id;
+        return id;
     }
+
     public void setId(String id) {
-        Id = id;
+        this.id = id;
     }
+
     public String getName() {
-        return Name;
+        return name;
     }
+
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
+
     public String getEmail() {
-        return Email;
+        return email;
     }
+
     public void setEmail(String email) {
-        Email = email;
+        this.email = email;
     }
+
     public String getPassword() {
-        return Password;
+        return password;
     }
+
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
     }
 
-
-    
-    
 }

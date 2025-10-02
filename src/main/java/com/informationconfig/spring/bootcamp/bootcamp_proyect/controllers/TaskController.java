@@ -1,6 +1,8 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Task;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.services.TaskService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
+@RestController
 @RequestMapping("/tasks")
 public class TaskController {
     
@@ -23,8 +26,8 @@ public class TaskController {
     }
 
     @PostMapping("/add")
-    public Task add(@Valid @RequestBody Task task) {
-        return this.taskService.addTask(task);
+    public Task add(@Valid @RequestBody Task task, @RequestBody String tutorId) {
+        return this.taskService.addTask(task, tutorId);
     }
 
     @PostMapping("/createVariable")

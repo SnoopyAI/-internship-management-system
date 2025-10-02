@@ -1,6 +1,8 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.controllers;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.PerformanceReport;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.services.PerformanceReportService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
+@RestController
 @RequestMapping("/performancereports")
 public class PerformanceReportController {
     
