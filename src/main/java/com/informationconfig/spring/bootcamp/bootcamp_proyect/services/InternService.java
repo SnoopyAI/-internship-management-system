@@ -1,8 +1,15 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.services;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Intern;    
+
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.InternDTO;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Intern;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.CompanyTutorRepository;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.AcademyTutorRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.InternRepository;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 
 @Service
 public class InternService {
@@ -13,27 +20,66 @@ public class InternService {
         this.internRepository = internRepository;
     }
 
-    public Intern addIntern(Intern intern) {
-        return internRepository.addIntern(intern);
+    @Autowired
+    private CompanyTutorRepository companyTutorRepository;
+
+    @Autowired
+    private AcademyTutorRepository academyTutorRepository;
+
+    public Intern addIntern(InternDTO dto) {
+        Intern intern = new Intern();
+        intern.setId(dto.getId());
+        intern.setName(dto.getName());
+        intern.setEmail(dto.getEmail());
+        intern.setPassword(dto.getPassword());
+        intern.setUniversity(dto.getUniversity());
+        intern.setCareer(dto.getCareer());
+        intern.setSemester(dto.getSemester());
+
+    // Asociar academyTutor si existe
+    if (dto.getAcademyTutorId() != null) {
+        academyTutorRepository.findById(dto.getAcademyTutorId())
+            .ifPresent(intern::setAcademyTutor);
     }
 
-    public ArrayList<Intern> getAllInterns() {
-        return internRepository.getAllInterns();
+    // Asociar companyTutor si existe
+    if (dto.getCompanyTutorId() != null) {
+        companyTutorRepository.findById(dto.getCompanyTutorId())
+            .ifPresent(intern::setCompanyTutor);
     }
 
+    return internRepository.save(intern);
+}
+
+    
+
+    // Botener todos los Internos
+    public List<Intern> getAllInterns() {
+        return internRepository.findAll();
+    }
+
+    // Obtener Interno por ID
+    public Optional<Intern> getInternById(String id) {
+        return internRepository.findById(id);
+    }
+
+    // Actualizar Interno
+     public Intern updateIntern(String id, Intern updatedIntern) {
+        if (internRepository.existsById(id)) {
+            updatedIntern.setId(id);
+            return internRepository.save(updatedIntern);
+        }
+        return null;
+    }
+
+    // Eliminar un Interno
     public boolean deleteIntern(String id) {
-        return internRepository.deleteIntern(id);
+        if (internRepository.existsById(id)) {
+            internRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
-    public Intern updateIntern(String id, Intern updatedIntern) {
-        return internRepository.updateIntern(id, updatedIntern);
-    }
-
-    public Intern getInternById(String id) {
-        return internRepository.getInternById(id);
-    }
-
-    public ArrayList<Intern> getAllInterns(ArrayList<Intern> interns) {
-        return internRepository.getAllInterns(interns);
-    }
+   
 }

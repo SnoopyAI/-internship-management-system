@@ -1,20 +1,21 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.controllers;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.BoardDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Board;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.services.BoardServices;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-@Controller
 @RestController
 @RequestMapping("/boards")
 public class BoardController {
@@ -26,28 +27,64 @@ public class BoardController {
     }
 
     @PostMapping("/add")
-    public Board add(@Valid @RequestBody Board board) {
-        return this.boardService.addBoard(board);
+    public BoardDTO add(@RequestBody BoardDTO dto) {
+    Board board = boardService.addBoard(dto);
+        return new BoardDTO(
+            board.getBoardId(),
+            board.getName(),
+            board.getDescription(),
+            board.getStartDate(),
+            board.getEndDate(),
+            board.getAcademyTutor() != null ? board.getAcademyTutor().getId() : null,
+            board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null);
     }
+
 
     @PostMapping("/createVariable")
-    public ArrayList<Board> createVariable(@RequestBody ArrayList<Board> boards) {
-        return this.boardService.getAllBoards(boards);
-    }
-
-    @GetMapping("/ReadAll")
-    public ArrayList<Board> getAllBoards() {
+    public List<Board> createVariable(@RequestBody List<Board> boards) {
         return this.boardService.getAllBoards();
     }
 
+    @GetMapping("/ReadAll")
+    public List<BoardDTO> getAllBoards() {
+    List<Board> boards = boardService.getAllBoards();
+        return boards.stream().map(board -> new BoardDTO(
+            board.getBoardId(),
+            board.getName(),
+            board.getDescription(),
+            board.getStartDate(),
+            board.getEndDate(),
+            board.getAcademyTutor() != null ? board.getAcademyTutor().getId() : null,
+            board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null
+        )).toList();
+}
+
     @GetMapping("/{id}")
-    public Board getBoardById(@PathVariable String id) {
-        return this.boardService.getBoardById(id);
+    public Optional<BoardDTO> getBoardById(@PathVariable String id) {
+        return boardService.getBoardById(id)
+            .map(board -> new BoardDTO(
+                board.getBoardId(),
+                board.getName(),
+                board.getDescription(),
+                board.getStartDate(),
+                board.getEndDate(),
+                board.getAcademyTutor() != null ? board.getAcademyTutor().getId() : null,
+                board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null
+
+            ));
     }
 
     @PatchMapping("/{id}")
-    public Board updateBoard(@PathVariable String id, @Valid @RequestBody Board updatedBoard) {
-        return this.boardService.updateBoard(id, updatedBoard);
+    public BoardDTO updateBoard(@Valid @RequestBody Board updatedBoard) {
+        Board board = this.boardService.updateBoard(updatedBoard);
+        return new BoardDTO(
+            board.getBoardId(),
+            board.getName(),
+            board.getDescription(),
+            board.getStartDate(),
+            board.getEndDate(),
+            board.getAcademyTutor() != null ? board.getAcademyTutor().getId() : null,
+            board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null);
     }
 
     @DeleteMapping("/{id}")

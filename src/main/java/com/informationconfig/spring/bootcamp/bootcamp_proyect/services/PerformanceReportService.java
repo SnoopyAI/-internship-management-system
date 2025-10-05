@@ -1,8 +1,14 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.services;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.ReportsDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.PerformanceReport;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.AcademyTutorRepository;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.CompanyTutorRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.PerformanceReportRepository;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PerformanceReportService {
@@ -13,27 +19,57 @@ public class PerformanceReportService {
         this.performanceReportRepository = performanceReportRepository;
     }
 
-    public PerformanceReport addPerformanceReport(PerformanceReport performanceReport) {
-        return performanceReportRepository.addPerformanceReport(performanceReport);
+    @Autowired
+    private CompanyTutorRepository companyTutorRepository;
+
+    @Autowired
+    private AcademyTutorRepository academyTutorRepository;
+
+    // Crear un nuevo reporte
+    public PerformanceReport addReport(ReportsDTO dto) {
+        PerformanceReport report =  new PerformanceReport();
+        report.setContent(dto.getContent());
+        report.setReportId(dto.getId());
+        report.setReportDate(dto.getReportDate());
+
+    if (dto.getAcademyTutorId() != null) {
+        academyTutorRepository.findById(dto.getAcademyTutorId())
+            .ifPresent(report::setAcademyTutor);
     }
 
-    public ArrayList<PerformanceReport> getAllPerformanceReports() {
-        return performanceReportRepository.getAllPerformanceReports();
+    // Asociar companyTutor si existe
+    if (dto.getCompanyTutorId() != null) {
+        companyTutorRepository.findById(dto.getCompanyTutorId())
+            .ifPresent(report::setCompanyTutor);
     }
 
-    public boolean deletePerformanceReport(String id) {
-        return performanceReportRepository.deletePerformanceReport(id);
+        return performanceReportRepository.save(report);
+    }
+    // Obtener todas las listas
+    public List<PerformanceReport> getAllReports() {
+        return performanceReportRepository.findAll();
     }
 
-    public PerformanceReport updatePerformanceReport(String id, PerformanceReport updatedPerformanceReport) {
-        return performanceReportRepository.updatePerformanceReport(id, updatedPerformanceReport);
+    // Obtener un reporte por ID
+    public Optional<PerformanceReport> getReportById(String id) {
+        return performanceReportRepository.findById(id);
     }
 
-    public PerformanceReport getPerformanceReportById(String id) {
-        return performanceReportRepository.getPerformanceReportById(id);
+    // Actualizar un reporte
+    public PerformanceReport updateReport(String id, PerformanceReport updatedReport) {
+        if (performanceReportRepository.existsById(id)) {
+            updatedReport.setReportId(id);
+            return performanceReportRepository.save(updatedReport);
+        }
+        return null;
     }
 
-    public ArrayList<PerformanceReport> getAllPerformanceReports(ArrayList<PerformanceReport> performanceReports) {
-        return performanceReportRepository.getAllPerformanceReports(performanceReports);
+    // Eliminar un reporte
+    public boolean deleteReport(String id) {
+        if (performanceReportRepository.existsById(id)) {
+            performanceReportRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

@@ -22,6 +22,15 @@ public class Lists {
     @JoinColumn(name = "board_id", nullable = false, foreignKey = @ForeignKey(name = "FK_BOARD_LIST"))
     private Board board;
 
+    // Constructors
+
+    public Lists() {}
+
+    public Lists(String id, String name) {
+        listId = id;
+        this.name = name;
+    } 
+
     // Getters and Setters
 
     public String getListId() {

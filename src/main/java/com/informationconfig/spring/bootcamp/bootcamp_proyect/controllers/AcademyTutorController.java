@@ -1,20 +1,21 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.controllers;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.AcademyTutor;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.AcademyTutorDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.services.AcademyTutorService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-@Controller
 @RestController
 @RequestMapping("/academytutors")
 public class AcademyTutorController {
@@ -26,23 +27,48 @@ public class AcademyTutorController {
     }
 
     @PostMapping("/add")
-    public AcademyTutor add(@Valid @RequestBody AcademyTutor academyTutor) {
-        return this.academyTutorService.addAcademyTutor(academyTutor);
+    public AcademyTutorDTO add(@Valid @RequestBody AcademyTutorDTO dto) {
+    AcademyTutor academyTutor = academyTutorService.addAcademyTutor(dto);
+        return new AcademyTutorDTO(
+            academyTutor.getId(),
+            academyTutor.getName(),
+            academyTutor.getEmail(),
+            academyTutor.getPassword(),
+            academyTutor.getAcademy(),
+            academyTutor.getDepartment()
+        );
     }
 
     @PostMapping("/createVariable")
-    public ArrayList<AcademyTutor> createVariable(@RequestBody ArrayList<AcademyTutor> academyTutors) {
-        return this.academyTutorService.getAllAcademyTutors(academyTutors);
+    public List<AcademyTutor> createVariable(@RequestBody List<AcademyTutor> academyTutors) {
+        return this.academyTutorService.getAllAcademyTutors();
     }
     
     @GetMapping("/ReadAll")
-    public ArrayList<AcademyTutor> getAllAcademyTutors() {
-        return this.academyTutorService.getAllAcademyTutors();
+    public List<AcademyTutorDTO> getAllAcademyTutors() {
+        List<AcademyTutor> tutors = academyTutorService.getAllAcademyTutors();
+        return tutors.stream().map(t -> new AcademyTutorDTO(
+                    t.getId(),
+                    t.getName(),
+                    t.getEmail(),
+                    t.getPassword(),
+                    t.getAcademy(),
+                    t.getDepartment()
+            )).toList();
     }
 
+
       @GetMapping("/{id}")
-    public AcademyTutor getAcademyTutorById(@PathVariable String id) {
-        return this.academyTutorService.getAcademyTutorById(id);
+    public Optional<AcademyTutorDTO>tAcademyTutorById(@PathVariable String id) {
+        return academyTutorService.getAcademyTutorById(id)
+            .map(t -> new AcademyTutorDTO(
+                    t.getId(),
+                    t.getName(),
+                    t.getEmail(),
+                    t.getPassword(),
+                    t.getAcademy(),
+                    t.getDepartment()
+            ));
     }
 
     @PatchMapping("/{id}")

@@ -1,20 +1,21 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.controllers;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Lists;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.services.ListsService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-@Controller
+
 @RestController
 @RequestMapping("/lists")
 public class ListsController {
@@ -31,17 +32,17 @@ public class ListsController {
     }
 
     @PostMapping("/createVariable")
-    public ArrayList<Lists> createVariable(@RequestBody ArrayList<Lists> listss) {
-        return this.listsService.getAllLists(listss);
+    public List<Lists> createVariable(@RequestBody List<Lists> listss) {
+        return this.listsService.getAllList();
     }
     
     @GetMapping("/ReadAll")
-    public ArrayList<Lists> getAllListss() {
-        return this.listsService.getAllLists();
+    public List<Lists> getAllListss() {
+        return this.listsService.getAllList();
     }
 
       @GetMapping("/{id}")
-    public Lists getListsById(@PathVariable String id) {
+    public Optional<Lists> getListsById(@PathVariable String id) {
         return this.listsService.getListById(id);
     }
 

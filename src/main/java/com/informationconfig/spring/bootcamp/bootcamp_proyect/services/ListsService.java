@@ -2,7 +2,8 @@ package com.informationconfig.spring.bootcamp.bootcamp_proyect.services;
 import org.springframework.stereotype.Service;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Lists;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.ListsRepository;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ListsService {
@@ -13,27 +14,36 @@ public class ListsService {
         this.listsRepository = listsRepository;
     }
 
+    // Crear una nueva lista
     public Lists addList(Lists list) {
-        return listsRepository.addList(list);
+        return listsRepository.save(list);
     }
 
-    public ArrayList<Lists> getAllLists() {
-        return listsRepository.getAllLists();
+    // Obtener todas las listas
+    public List<Lists> getAllList() {
+        return listsRepository.findAll();
     }
 
-    public boolean deleteList(String id) {
-        return listsRepository.deleteList(id);
+    // Obtener un CompanyTutor por ID
+    public Optional<Lists> getListById(String id) {
+        return listsRepository.findById(id);
     }
 
+    // Actualizar una lista
     public Lists updateList(String id, Lists updatedList) {
-        return listsRepository.updateList(id, updatedList);
+        if (listsRepository.existsById(id)) {
+            updatedList.setListId(id);
+            return listsRepository.save(updatedList);
+        }
+        return null;
     }
 
-    public Lists getListById(String id) {
-        return listsRepository.getListById(id);
-    }
-
-    public ArrayList<Lists> getAllLists(ArrayList<Lists> lists) {
-        return listsRepository.getAllLists(lists);
+    // Eliminar una lista
+    public boolean deleteList(String id) {
+        if (listsRepository.existsById(id)) {
+            listsRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

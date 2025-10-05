@@ -8,13 +8,14 @@ import java.util.List;
 @Table(name = "interns")
 public class Intern extends User {
 
+    
     @Column(name = "university", length = 50, nullable = false)
     private String university; // Nombre simplificado
 
-    @Column(name = "career", length = 100)
+    @Column(name = "career", length = 100, nullable = false)
     private String career;
     
-    @Column(name = "semester")
+    @Column(name = "semester", nullable = false)
     private Integer semester;
 
     @ManyToMany(mappedBy = "interns")
@@ -36,14 +37,9 @@ public class Intern extends User {
     // Constructores
     public Intern() {}
 
-    public Intern(String id, String name, String email, String password, String university) {
+    public Intern(String id, String name, String email, String password, String university, String career, Integer semester) {
         super(id, name, email, password);
         this.university = university;
-    }
-
-    public Intern(String id, String name, String email, String password, 
-                 String university, String career, Integer semester) {
-        this(id, name, email, password, university);
         this.career = career;
         this.semester = semester;
     }

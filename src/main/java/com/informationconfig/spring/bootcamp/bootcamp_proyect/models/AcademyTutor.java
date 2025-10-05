@@ -10,7 +10,7 @@ import java.util.List;
 
 public class AcademyTutor extends User {
 
-
+        
         @Column(name = "Academy", length = 100, nullable = false)
         private String academy;
 
@@ -28,6 +28,18 @@ public class AcademyTutor extends User {
 
         @OneToMany(mappedBy = "academyTutor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
         private List<Board> boards = new ArrayList<>();
+
+        // Constructors
+
+        public AcademyTutor() {}
+
+        public AcademyTutor(String id, String name, String email, String password, String academy, String department){
+            super(id, name, email, password);
+            this.academy = academy;
+            this.department = department;
+        }
+
+        // Getters and Setters
 
         public List<Task> getCreatedTasks() {
             return createdTasks;
