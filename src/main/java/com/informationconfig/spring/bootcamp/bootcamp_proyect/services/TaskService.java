@@ -46,14 +46,24 @@ public Task addTask(TaskRequestDTO dto, String tutorId) {
         throw new RuntimeException("Solo los tutores pueden crear tareas.");
     }
 
-    // Validar internos
+    // Validar que la tarea no exista (solo crear, no actualizar)
+    if (dto.getId() != null && taskRepository.existsById(dto.getId())) {
+        throw new RuntimeException("Ya existe una tarea con el ID: " + dto.getId());
+    }
+
+    // Validar internos - AGREGANDO LOGS PARA DEBUG
     List<String> internIds = dto.getInternsId();
+    System.out.println("DEBUG: Lista de internIds recibida: " + internIds);
     List<Intern> interns = new ArrayList<>();
     if (internIds != null && !internIds.isEmpty()) {
+        System.out.println("DEBUG: Buscando " + internIds.size() + " internos...");
         interns = internRepository.findAllById(internIds);
+        System.out.println("DEBUG: Encontrados " + interns.size() + " internos");
         if (interns.size() != internIds.size()) {
             throw new RuntimeException("Uno o más internos no existen.");
         }
+    } else {
+        System.out.println("DEBUG: No se enviaron internos para asociar");
     }
 
     Task newTask = new Task();
@@ -70,7 +80,8 @@ public Task addTask(TaskRequestDTO dto, String tutorId) {
             .ifPresent(newTask::setList);
     }
 
-    // Asociar internos
+    // Asociar internos - AGREGANDO LOG PARA DEBUG
+    System.out.println("DEBUG: Asociando " + interns.size() + " internos a la tarea");
     newTask.setInterns(interns);
 
     return taskRepository.save(newTask);

@@ -18,8 +18,13 @@ public class CompanyTutorService {
         this.companyTutorRepository = companyTutorRepository;
     }
 
-    // Crear un nuevo CompanyTutor
+    // Solo crear (no actualizar)
     public CompanyTutor addCompanyTutor(CompanyTutorDTO dto) {
+        // Validar que el tutor no exista
+        if (dto.getId() != null && companyTutorRepository.existsById(dto.getId())) {
+            throw new RuntimeException("Ya existe un tutor de empresa con el ID: " + dto.getId());
+        }
+        
         CompanyTutor companyTutor = new CompanyTutor();
         companyTutor.setId(dto.getId());
         companyTutor.setName(dto.getName());

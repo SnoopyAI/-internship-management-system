@@ -25,8 +25,13 @@ public class PerformanceReportService {
     @Autowired
     private AcademyTutorRepository academyTutorRepository;
 
-    // Crear un nuevo reporte
+    // Solo crear (no actualizar)
     public PerformanceReport addReport(ReportsDTO dto) {
+        // Validar que el reporte no exista
+        if (dto.getId() != null && performanceReportRepository.existsById(dto.getId())) {
+            throw new RuntimeException("Ya existe un reporte con el ID: " + dto.getId());
+        }
+        
         PerformanceReport report =  new PerformanceReport();
         report.setContent(dto.getContent());
         report.setReportId(dto.getId());

@@ -58,7 +58,7 @@ public class CompanyTutorController {
             )).toList();
     }
 
-      @GetMapping("/{id}")
+    @GetMapping("/{id}")
     public Optional<CompanyTutorDTO> getCompanyTutorById(@PathVariable String id) {
         return companyTutorService.getCompanyTutorById(id)
             .map(t -> new CompanyTutorDTO(

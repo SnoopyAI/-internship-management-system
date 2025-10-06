@@ -27,8 +27,13 @@ public class BoardServices {
     @Autowired
     private AcademyTutorRepository academyTutorRepository;
 
-    // Crear un Board
+    // Solo crear (no actualizar)
     public Board addBoard(BoardDTO dto) {
+        // Validar que el board no exista
+        if (dto.getId() != null && boardRepository.existsById(dto.getId())) {
+            throw new RuntimeException("Ya existe un board con el ID: " + dto.getId());
+        }
+        
         Board board = new Board();
         board.setBoardId(dto.getId());
         board.setName(dto.getName());

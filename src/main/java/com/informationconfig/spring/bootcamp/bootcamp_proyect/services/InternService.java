@@ -31,6 +31,11 @@ public class InternService {
     private BoardRepository boardRepository;
 
     public Intern addIntern(InternDTO dto) {
+        // Validar que el interno no exista
+        if (dto.getId() != null && internRepository.existsById(dto.getId())) {
+            throw new RuntimeException("Ya existe un interno con el ID: " + dto.getId());
+        }
+        
         Intern intern = new Intern();
         intern.setId(dto.getId());
         intern.setName(dto.getName());

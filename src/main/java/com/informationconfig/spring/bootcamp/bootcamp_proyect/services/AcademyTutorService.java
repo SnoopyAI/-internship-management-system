@@ -19,8 +19,13 @@ public class AcademyTutorService {
         this.academyTutorRepository = academyTutorRepository;
     }
 
-    // Crear o actualizar un tutor
+    // Solo crear (no actualizar)
     public AcademyTutor addAcademyTutor(AcademyTutorDTO dto) {
+        // Validar que el tutor no exista
+        if (dto.getId() != null && academyTutorRepository.existsById(dto.getId())) {
+            throw new RuntimeException("Ya existe un tutor académico con el ID: " + dto.getId());
+        }
+        
         AcademyTutor academyTutor = new AcademyTutor();
         academyTutor.setId(dto.getId());
         academyTutor.setName(dto.getName());

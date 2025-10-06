@@ -20,8 +20,13 @@ public class ListsService {
     @Autowired
     private BoardServices boardServices;
 
-    // Crear una nueva lista
+    // Solo crear (no actualizar)
     public Lists addList(ListDTO dto) {
+        // Validar que la lista no exista
+        if (dto.getId() != null && listsRepository.existsById(dto.getId())) {
+            throw new RuntimeException("Ya existe una lista con el ID: " + dto.getId());
+        }
+        
         Lists list = new Lists();
         list.setListId(dto.getId());
         list.setName(dto.getName());
