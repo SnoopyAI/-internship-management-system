@@ -98,10 +98,29 @@ public Task addTask(TaskRequestDTO dto, String tutorId) {
     }
 
     // Actualizar una tarea
-    public Task updateTask(String id, Task updatedTask) {
+    public Task updateTask(String id, TaskRequestDTO dto) {
         if (taskRepository.existsById(id)) {
-            updatedTask.setTaskId(id);
-            return taskRepository.save(updatedTask);
+            Task task = taskRepository.findById(id).get();
+            
+            // Actualizar solo los campos no nulos del DTO
+            if (dto.getTitle() != null) {
+                task.setTitle(dto.getTitle());
+            }
+            if (dto.getDescription() != null) {
+                task.setDescription(dto.getDescription());
+            }
+            if (dto.getStatus() != null) {
+                task.setStatus(dto.getStatus());
+            }
+            if (dto.getDueDate() != null) {
+                task.setDueDate(dto.getDueDate());
+            }
+            if (dto.getAssignTo() != null) {
+                task.setAssingTo(dto.getAssignTo());
+            }
+            // Note: List and intern relationships should be updated through dedicated endpoints
+            
+            return taskRepository.save(task);
         }
         return null;
     }

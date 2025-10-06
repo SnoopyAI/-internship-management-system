@@ -49,10 +49,17 @@ public class ListsService {
     }
 
     // Actualizar una lista
-    public Lists updateList(String id, Lists updatedList) {
+    public Lists updateList(String id, ListDTO dto) {
         if (listsRepository.existsById(id)) {
-            updatedList.setListId(id);
-            return listsRepository.save(updatedList);
+            Lists list = listsRepository.findById(id).get();
+            
+            // Actualizar solo los campos no nulos del DTO
+            if (dto.getName() != null) {
+                list.setName(dto.getName());
+            }
+            // Note: Board relationship should be updated through dedicated endpoints
+            
+            return listsRepository.save(list);
         }
         return null;
     }

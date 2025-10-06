@@ -79,10 +79,32 @@ public class InternService {
     }
 
     // Actualizar Interno
-     public Intern updateIntern(String id, Intern updatedIntern) {
+     public Intern updateIntern(String id, InternDTO dto) {
         if (internRepository.existsById(id)) {
-            updatedIntern.setId(id);
-            return internRepository.save(updatedIntern);
+            Intern intern = internRepository.findById(id).get();
+            
+            // Actualizar solo los campos no nulos del DTO
+            if (dto.getName() != null) {
+                intern.setName(dto.getName());
+            }
+            if (dto.getEmail() != null) {
+                intern.setEmail(dto.getEmail());
+            }
+            if (dto.getPassword() != null) {
+                intern.setPassword(dto.getPassword());
+            }
+            if (dto.getUniversity() != null) {
+                intern.setUniversity(dto.getUniversity());
+            }
+            if (dto.getCareer() != null) {
+                intern.setCareer(dto.getCareer());
+            }
+            if (dto.getSemester() != 0) {
+                intern.setSemester(dto.getSemester());
+            }
+            // Note: Tutor relationships should be updated through dedicated endpoints
+            
+            return internRepository.save(intern);
         }
         return null;
     }

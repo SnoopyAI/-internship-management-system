@@ -47,11 +47,29 @@ public class AcademyTutorService {
     }
 
     // Actualizar un tutor existente
-    public AcademyTutor updateAcademyTutor(String id, AcademyTutor updatedAcademyTutor) {
+    public AcademyTutor updateAcademyTutor(String id, AcademyTutorDTO dto) {
         // Opcional: validar si existe antes
         if (academyTutorRepository.existsById(id)) {
-            updatedAcademyTutor.setId(id); 
-            return academyTutorRepository.save(updatedAcademyTutor);
+            AcademyTutor academyTutor = academyTutorRepository.findById(id).get();
+            
+            // Actualizar solo los campos no nulos del DTO
+            if (dto.getName() != null) {
+                academyTutor.setName(dto.getName());
+            }
+            if (dto.getEmail() != null) {
+                academyTutor.setEmail(dto.getEmail());
+            }
+            if (dto.getPassword() != null) {
+                academyTutor.setPassword(dto.getPassword());
+            }
+            if (dto.getAcademy() != null) {
+                academyTutor.setAcademy(dto.getAcademy());
+            }
+            if (dto.getDepartment() != null) {
+                academyTutor.setDepartment(dto.getDepartment());
+            }
+            
+            return academyTutorRepository.save(academyTutor);
         }
         return null; // o lanza una excepción
     }

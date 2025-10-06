@@ -72,8 +72,21 @@ public class AcademyTutorController {
     }
 
     @PatchMapping("/{id}")
-    public AcademyTutor updateAcademyTutor(@PathVariable String id, @Valid @RequestBody AcademyTutor updatedAcademyTutor) {
-        return this.academyTutorService.updateAcademyTutor(id, updatedAcademyTutor);
+    public AcademyTutorDTO updateAcademyTutor(@PathVariable String id, @Valid @RequestBody AcademyTutorDTO dto) {
+        AcademyTutor existing = this.academyTutorService.getAcademyTutorById(id).orElse(null);
+        if (existing == null) {
+            return null;
+        }
+        
+        AcademyTutor updated = this.academyTutorService.updateAcademyTutor(id, dto);
+        return new AcademyTutorDTO(
+            updated.getId(),
+            updated.getName(),
+            updated.getEmail(),
+            updated.getPassword(),
+            updated.getAcademy(),
+            updated.getDepartment()
+        );
     }
     
     @DeleteMapping("/{id}")

@@ -69,8 +69,20 @@ public class PerformanceReportController {
     }
 
     @PatchMapping("/{id}")
-    public PerformanceReport updatePerformanceReport(@PathVariable String id, @Valid @RequestBody PerformanceReport updatedPerformanceReport) {
-        return this.performanceReportService.updateReport(id, updatedPerformanceReport);
+    public ReportsDTO updatePerformanceReport(@PathVariable String id, @Valid @RequestBody ReportsDTO dto) {
+        PerformanceReport existing = this.performanceReportService.getReportById(id).orElse(null);
+        if (existing == null) {
+            return null;
+        }
+        
+        PerformanceReport updated = this.performanceReportService.updateReport(id, dto);
+        return new ReportsDTO(
+            updated.getReportId(),
+            updated.getReportDate(),
+            updated.getContent(),
+            updated.getAcademyTutor() != null ? updated.getAcademyTutor().getId() : null,
+            updated.getCompanyTutor() != null ? updated.getCompanyTutor().getId() : null
+        );
     }
     
     @DeleteMapping("/{id}")

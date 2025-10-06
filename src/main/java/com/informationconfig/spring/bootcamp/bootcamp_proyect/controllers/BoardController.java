@@ -75,8 +75,13 @@ public class BoardController {
     }
 
     @PatchMapping("/{id}")
-    public BoardDTO updateBoard(@Valid @RequestBody Board updatedBoard) {
-        Board board = this.boardService.updateBoard(updatedBoard);
+    public BoardDTO updateBoard(@PathVariable String id, @Valid @RequestBody BoardDTO dto) {
+        Board existing = this.boardService.getBoardById(id).orElse(null);
+        if (existing == null) {
+            return null;
+        }
+        
+        Board board = this.boardService.updateBoard(id, dto);
         return new BoardDTO(
             board.getBoardId(),
             board.getName(),

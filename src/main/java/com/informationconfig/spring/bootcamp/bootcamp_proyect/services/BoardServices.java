@@ -67,9 +67,26 @@ public class BoardServices {
     }
 
     // Actualizar un Board
-    public Board updateBoard(Board updatedBoard) {
-        if (boardRepository.existsById(updatedBoard.getBoardId())) {
-            return boardRepository.save(updatedBoard);
+    public Board updateBoard(String id, BoardDTO dto) {
+        if (boardRepository.existsById(id)) {
+            Board board = boardRepository.findById(id).get();
+            
+            // Actualizar solo los campos no nulos del DTO
+            if (dto.getName() != null) {
+                board.setName(dto.getName());
+            }
+            if (dto.getDescription() != null) {
+                board.setDescription(dto.getDescription());
+            }
+            if (dto.getStartDate() != null) {
+                board.setStartDate(dto.getStartDate());
+            }
+            if (dto.getEndDate() != null) {
+                board.setEndDate(dto.getEndDate());
+            }
+            // Note: Tutor relationships should be updated through dedicated endpoints
+            
+            return boardRepository.save(board);
         }
         return null;
     }

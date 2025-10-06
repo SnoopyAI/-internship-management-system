@@ -8,6 +8,7 @@ import com.informationconfig.spring.bootcamp.bootcamp_proyect.services.TaskServi
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -88,14 +89,27 @@ public Optional<TaskRequestDTO> getTaskById(@PathVariable String id) {
 
 
     @PatchMapping("/{id}")
-    public Task updateTask(@PathVariable String id, @Valid @RequestBody Task updatedTask) {
+    public TaskRequestDTO updateTask(@PathVariable String id, @Valid @RequestBody TaskRequestDTO dto) {
         // Solo actualizar si existe
         Task existing = this.taskService.getTaskById(id).orElse(null);
         if (existing == null) {
             return null;
         }
-        updatedTask.setTaskId(id); // Mantener el mismo ID
-        return this.taskService.updateTask(id, updatedTask);
+        
+        Task updated = this.taskService.updateTask(id, dto);
+        return new TaskRequestDTO(
+            updated.getTaskId(),
+            updated.getTitle(),
+            updated.getDescription(),
+            updated.getStatus(),
+            updated.getDueDate(),
+            updated.getAssignTo(),
+            updated.getCreatedByTutorId(),
+            updated.getList() != null ? updated.getList().getListId() : null,
+            updated.getInterns() != null 
+                ? updated.getInterns().stream().map(intern -> intern.getId()).collect(Collectors.toList())
+                : List.of()
+        );
     }
     
     @DeleteMapping("/{id}")

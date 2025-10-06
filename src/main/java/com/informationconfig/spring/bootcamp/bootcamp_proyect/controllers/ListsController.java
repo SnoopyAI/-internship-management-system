@@ -63,8 +63,18 @@ public class ListsController {
     }
 
     @PatchMapping("/{id}")
-    public Lists updateLists(@PathVariable String id, @Valid @RequestBody Lists updatedLists) {
-        return this.listsService.updateList(id, updatedLists);
+    public ListDTO updateLists(@PathVariable String id, @Valid @RequestBody ListDTO dto) {
+        Lists existing = this.listsService.getListById(id).orElse(null);
+        if (existing == null) {
+            return null;
+        }
+        
+        Lists updated = this.listsService.updateList(id, dto);
+        return new ListDTO(
+            updated.getListId(),
+            updated.getName(),
+            updated.getBoard() != null ? updated.getBoard().getBoardId() : null
+        );
     }
     
     @DeleteMapping("/{id}")

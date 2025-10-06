@@ -85,8 +85,25 @@ public class InternController {
     }
 
     @PatchMapping("/{id}")
-    public Intern updateIntern(@PathVariable String id, @Valid @RequestBody Intern updatedIntern) {
-        return this.internService.updateIntern(id, updatedIntern);
+    public InternDTO updateIntern(@PathVariable String id, @Valid @RequestBody InternDTO dto) {
+        Intern existing = this.internService.getInternById(id).orElse(null);
+        if (existing == null) {
+            return null;
+        }
+        
+        Intern updated = this.internService.updateIntern(id, dto);
+        return new InternDTO(
+            updated.getId(),
+            updated.getName(),
+            updated.getEmail(),
+            updated.getPassword(),
+            updated.getUniversity(),
+            updated.getCareer(),
+            updated.getSemester(),
+            updated.getAcademyTutor() != null ? updated.getAcademyTutor().getId() : null,
+            updated.getCompanyTutor() != null ? updated.getCompanyTutor().getId() : null,
+            updated.getBoard() != null ? updated.getBoard().getBoardId() : null
+        );
     }
     
     @DeleteMapping("/{id}")

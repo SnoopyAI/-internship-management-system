@@ -47,10 +47,28 @@ public class CompanyTutorService {
     }
 
     // Actualizar un CompanyTutor
-    public CompanyTutor updateCompanyTutor(String id, CompanyTutor updatedCompanyTutor) {
+    public CompanyTutor updateCompanyTutor(String id, CompanyTutorDTO dto) {
         if (companyTutorRepository.existsById(id)) {
-            updatedCompanyTutor.setId(id);
-            return companyTutorRepository.save(updatedCompanyTutor);
+            CompanyTutor companyTutor = companyTutorRepository.findById(id).get();
+            
+            // Actualizar solo los campos no nulos del DTO
+            if (dto.getName() != null) {
+                companyTutor.setName(dto.getName());
+            }
+            if (dto.getEmail() != null) {
+                companyTutor.setEmail(dto.getEmail());
+            }
+            if (dto.getPassword() != null) {
+                companyTutor.setPassword(dto.getPassword());
+            }
+            if (dto.getPosition() != null) {
+                companyTutor.setPosition(dto.getPosition());
+            }
+            if (dto.getCompany() != null) {
+                companyTutor.setCompany(dto.getCompany());
+            }
+            
+            return companyTutorRepository.save(companyTutor);
         }
         return null;
     }

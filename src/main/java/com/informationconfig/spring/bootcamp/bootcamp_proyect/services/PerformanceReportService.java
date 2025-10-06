@@ -61,10 +61,20 @@ public class PerformanceReportService {
     }
 
     // Actualizar un reporte
-    public PerformanceReport updateReport(String id, PerformanceReport updatedReport) {
+    public PerformanceReport updateReport(String id, ReportsDTO dto) {
         if (performanceReportRepository.existsById(id)) {
-            updatedReport.setReportId(id);
-            return performanceReportRepository.save(updatedReport);
+            PerformanceReport report = performanceReportRepository.findById(id).get();
+            
+            // Actualizar solo los campos no nulos del DTO
+            if (dto.getReportDate() != null) {
+                report.setReportDate(dto.getReportDate());
+            }
+            if (dto.getContent() != null) {
+                report.setContent(dto.getContent());
+            }
+            // Note: Tutor relationships should be updated through dedicated endpoints
+            
+            return performanceReportRepository.save(report);
         }
         return null;
     }

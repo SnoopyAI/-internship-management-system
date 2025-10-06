@@ -72,13 +72,21 @@ public class CompanyTutorController {
     }
 
     @PatchMapping("/{id}")
-    public CompanyTutor updateCompanyTutor(@PathVariable String id, @Valid @RequestBody CompanyTutor updatedCompanyTutor) {
+    public CompanyTutorDTO updateCompanyTutor(@PathVariable String id, @Valid @RequestBody CompanyTutorDTO dto) {
         CompanyTutor existing = this.companyTutorService.getCompanyTutorById(id).orElse(null);
         if (existing == null) {
             return null;
         }
-        updatedCompanyTutor.setId(id);
-        return this.companyTutorService.updateCompanyTutor(id, updatedCompanyTutor);
+        
+        CompanyTutor updated = this.companyTutorService.updateCompanyTutor(id, dto);
+        return new CompanyTutorDTO(
+            updated.getId(),
+            updated.getName(),
+            updated.getEmail(),
+            updated.getPassword(),
+            updated.getPosition(),
+            updated.getCompany()
+        );
     }
     
     @DeleteMapping("/{id}")
