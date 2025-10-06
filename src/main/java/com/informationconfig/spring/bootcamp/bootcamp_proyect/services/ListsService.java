@@ -1,5 +1,8 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.services;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.ListDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Lists;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.ListsRepository;
 import java.util.List;
@@ -14,8 +17,19 @@ public class ListsService {
         this.listsRepository = listsRepository;
     }
 
+    @Autowired
+    private BoardServices boardServices;
+
     // Crear una nueva lista
-    public Lists addList(Lists list) {
+    public Lists addList(ListDTO dto) {
+        Lists list = new Lists();
+        list.setListId(dto.getId());
+        list.setName(dto.getName());
+        
+        if (dto.getBoardId() != null) {
+            boardServices.getBoardById(dto.getBoardId())
+                .ifPresent(list::setBoard);
+        }
         return listsRepository.save(list);
     }
 

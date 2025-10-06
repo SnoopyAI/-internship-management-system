@@ -98,7 +98,7 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public String getAssingTo() {
+    public String getAssignTo() {
         return assingTo;
     }
 

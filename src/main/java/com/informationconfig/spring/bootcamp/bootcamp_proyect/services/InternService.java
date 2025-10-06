@@ -6,6 +6,7 @@ import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.InternDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Intern;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.CompanyTutorRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.AcademyTutorRepository;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.BoardRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.InternRepository;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,9 @@ public class InternService {
     @Autowired
     private AcademyTutorRepository academyTutorRepository;
 
+    @Autowired
+    private BoardRepository boardRepository;
+
     public Intern addIntern(InternDTO dto) {
         Intern intern = new Intern();
         intern.setId(dto.getId());
@@ -35,6 +39,7 @@ public class InternService {
         intern.setUniversity(dto.getUniversity());
         intern.setCareer(dto.getCareer());
         intern.setSemester(dto.getSemester());
+        
 
     // Asociar academyTutor si existe
     if (dto.getAcademyTutorId() != null) {
@@ -46,6 +51,11 @@ public class InternService {
     if (dto.getCompanyTutorId() != null) {
         companyTutorRepository.findById(dto.getCompanyTutorId())
             .ifPresent(intern::setCompanyTutor);
+    }
+
+    if (dto.getBoardId() != null) {
+        boardRepository.findById(dto.getBoardId())
+            .ifPresent(intern::setBoard);
     }
 
     return internRepository.save(intern);

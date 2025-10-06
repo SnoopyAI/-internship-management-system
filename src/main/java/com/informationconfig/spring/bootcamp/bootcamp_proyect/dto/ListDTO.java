@@ -3,18 +3,19 @@ package com.informationconfig.spring.bootcamp.bootcamp_proyect.dto;
 public class ListDTO {
     private String id;
     private String name;
-    private String description;
-    private Integer priority; // <- aquí decides el tipo según el modelo original
+    private String boardId;
+    
 
     //  Constructor vacío
     public ListDTO() {}
 
     //  Constructor completo
-    public ListDTO(String id, String name, String description, Integer priority) {
+    public ListDTO(String id, String name, String boardId) {
         this.id = id;
         this.name = name;
-        this.description = description;
-        this.priority = priority;
+        this.boardId = boardId;
+
+        
     }
 
     // Getters y Setters
@@ -30,16 +31,11 @@ public class ListDTO {
     public void setName(String name) {
         this.name = name;
     }
-    public String getDescription() {
-        return description;
+    public String getBoardId() {
+        return boardId;
     }
-    public void setDescription(String description) {
-        this.description = description;
+    public void setBoardId(String boardId) {
+        this.boardId = boardId;
     }
-    public Integer getPriority() {
-        return priority;
-    }
-    public void setPriority(Integer priority) {
-        this.priority = priority;
-    }
+
 }

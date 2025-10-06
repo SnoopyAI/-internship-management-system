@@ -26,12 +26,25 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @PostMapping("/add")
-    public Task add(@RequestBody TaskRequestDTO request) {
-        // Solo crear, no actualizar
-        request.getTask().setTaskId(null); // Asegura que no se actualice una existente
-        return this.taskService.addTask(request.getTask(), request.getTutorId());
-    }
+   @PostMapping("/add")
+    public TaskRequestDTO add(@RequestBody TaskRequestDTO dto) {
+    Task newTask = taskService.addTask(dto, dto.getCreatedByTutorId());
+    // Evitar recursividad: solo devolver IDs de internos
+    List<String> internIds = newTask.getInterns() != null ? newTask.getInterns().stream().map(i -> i.getId()).toList()
+            : List.of();
+        return new TaskRequestDTO(
+            newTask.getTaskId(),
+            newTask.getTitle(),
+            newTask.getDescription(),
+            newTask.getDueDate(),
+            newTask.getStatus(),
+            newTask.getAssignTo(),
+            newTask.getCreatedByTutorId(),
+            newTask.getList() != null ? newTask.getList().getListId() : null,
+            internIds
+
+        );
+}
 
     @PostMapping("/createVariable")
     public List<Task> createVariable(@RequestBody List<Task> tasks) {
@@ -39,14 +52,40 @@ public class TaskController {
     }
     
     @GetMapping("/ReadAll")
-    public List<Task> getAllTasks() {
-        return this.taskService.getAllTasks();
-    }
+public List<TaskRequestDTO> getAllTasks() {
+    List<Task> tasks = this.taskService.getAllTasks();
+    return tasks.stream().map(t -> new TaskRequestDTO(
+        t.getTaskId(),
+        t.getTitle(),
+        t.getDescription(),
+        t.getDueDate(),
+        t.getStatus(),
+        t.getAssignTo(),
+        t.getCreatedByTutorId(),
+        t.getList() != null ? t.getList().getListId() : null,
+        t.getInterns() != null
+            ? t.getInterns().stream().map(i -> i.getId()).toList()
+            : List.of()
+    )).toList();
+}
 
-      @GetMapping("/{id}")
-    public Optional<Task> getTaskById(@PathVariable String id) {
-        return this.taskService.getTaskById(id);
-    }
+@GetMapping("/{id}")
+public Optional<TaskRequestDTO> getTaskById(@PathVariable String id) {
+    return this.taskService.getTaskById(id).map(t -> new TaskRequestDTO(
+        t.getTaskId(),
+        t.getTitle(),
+        t.getDescription(),
+        t.getDueDate(),
+        t.getStatus(),
+        t.getAssignTo(),
+        t.getCreatedByTutorId(),
+        t.getList() != null ? t.getList().getListId() : null,
+        t.getInterns() != null
+            ? t.getInterns().stream().map(i -> i.getId()).toList()
+            : List.of()
+    ));
+}
+
 
     @PatchMapping("/{id}")
     public Task updateTask(@PathVariable String id, @Valid @RequestBody Task updatedTask) {

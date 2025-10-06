@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.ListDTO;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -27,8 +28,13 @@ public class ListsController {
     }
 
     @PostMapping("/add")
-    public Lists add(@Valid @RequestBody Lists lists) {
-        return this.listsService.addList(lists);
+    public ListDTO add(@Valid @RequestBody ListDTO dto) {
+        Lists lists = listsService.addList(dto);
+        return new ListDTO(
+            lists.getListId(),
+            lists.getName(),
+            lists.getBoard() != null ? lists.getBoard().getBoardId() : null
+        );
     }
 
     @PostMapping("/createVariable")
@@ -37,13 +43,23 @@ public class ListsController {
     }
     
     @GetMapping("/ReadAll")
-    public List<Lists> getAllListss() {
-        return this.listsService.getAllList();
+    public List<ListDTO> getAllListss() {
+        List<Lists> lists = this.listsService.getAllList();
+        return lists.stream().map(list -> new ListDTO(
+            list.getListId(),
+            list.getName(),
+            list.getBoard() != null ? list.getBoard().getBoardId() : null
+        )).toList();
     }
 
-      @GetMapping("/{id}")
-    public Optional<Lists> getListsById(@PathVariable String id) {
-        return this.listsService.getListById(id);
+    @GetMapping("/{id}")
+    public Optional<ListDTO> getListsById(@PathVariable String id) {
+        return this.listsService.getListById(id)
+            .map(list -> new ListDTO(
+                list.getListId(),
+                list.getName(),
+                list.getBoard() != null ? list.getBoard().getBoardId() : null
+            ));
     }
 
     @PatchMapping("/{id}")
