@@ -1,33 +1,22 @@
-package com.informationconfig.spring.bootcamp.bootcamp_proyect.models;
+package com.informationconfig.spring.bootcamp.bootcamp_proyect.dto;
 
-import jakarta.persistence.*;
-
-@MappedSuperclass
-public abstract class User {
-
-    @Id
-    @Column(name = "ID", unique = true, nullable = false, length = 50)
+public class CompanyTutorDTO {
+    
     private String id;
-
-    @Column(name = "Name", nullable = false, length = 50)
     private String name;
-
-    @Column(name = "Email", unique = true, nullable = false, length = 80)
     private String email;
-
-    @Column(name = "Password", nullable = false, length = 20)
     private String password;
+    private String position;
+    private String company;
 
-    //  constructores, getters, setters
-
-    public User(String id, String name, String email, String password) {
+    public CompanyTutorDTO(String id, String name, String email, String password, String position, String company) {
         this.id = id;
-        this.name =  name;
+        this.name = name;
         this.email = email;
         this.password = password;
+        this.position = position;
+        this.company = company;
     }
-
-    public User() {}
 
     public String getId() {
         return id;
@@ -61,4 +50,21 @@ public abstract class User {
         this.password = password;
     }
 
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    
 }

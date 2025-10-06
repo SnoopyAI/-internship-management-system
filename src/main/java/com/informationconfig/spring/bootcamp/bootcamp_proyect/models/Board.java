@@ -22,7 +22,7 @@ public class Board {
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column(name = "end_date")
+    @Column(name = "end_date", nullable = true)
     private LocalDate endDate;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -39,25 +39,17 @@ public class Board {
     @JoinColumn(name = "company_tutor_id", nullable = false, foreignKey = @ForeignKey(name = "FK_COMPANY_TUTOR_BOARD"))
     private CompanyTutor companyTutor;
 
-    // Métodos específicos
+    // Constructors
 
-    public void createList(Lists list) {
-        list.setBoard(this);
-        this.lists.add(list);
-    }
+    public Board() {}
 
-    public void deleteList(String listId) {
-        this.lists.removeIf(l -> l.getListId().equals(listId));
-    }
-
-    public void addIntern(Intern intern) {
-        intern.setBoard(this);
-        this.interns.add(intern);
-    }
-
-    public void removeIntern(String internId) {
-        this.interns.removeIf(i -> i.getId().equals(internId));
-    }
+    public Board(String id, String name, String description, LocalDate startdate, LocalDate endDate) {
+        boardId = id;
+        this.name = name;
+        this.description = description;
+        this.startDate = startdate;
+        this.endDate = endDate;
+    } 
 
     // Getters y Setters
     public String getBoardId() { return boardId; }
@@ -86,4 +78,24 @@ public class Board {
 
     public CompanyTutor getCompanyTutor() { return companyTutor; }
     public void setCompanyTutor(CompanyTutor companyTutor) { this.companyTutor = companyTutor; }
+
+     // Métodos específicos
+
+    public void createList(Lists list) {
+        list.setBoard(this);
+        this.lists.add(list);
+    }
+
+    public void deleteList(String listId) {
+        this.lists.removeIf(l -> l.getListId().equals(listId));
+    }
+
+    public void addIntern(Intern intern) {
+        intern.setBoard(this);
+        this.interns.add(intern);
+    }
+
+    public void removeIntern(String internId) {
+        this.interns.removeIf(i -> i.getId().equals(internId));
+    }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 
 public class CompanyTutor extends User {
 
+
     @Column(name = "position", length = 100, nullable = true)
     private String position;
 
@@ -24,20 +25,19 @@ public class CompanyTutor extends User {
     @OneToMany(mappedBy = "companyTutor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Board> boards = new ArrayList<>();
     
-    // Métodos específicos de CompanyTutor
+    @OneToMany(mappedBy = "createdByTutorId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Task> createdTasks = new ArrayList<>();
 
-    public void assignTask(Task task) {
-        // Logic to assign a task to an intern
+    // Constructors
+
+    public CompanyTutor() {}
+
+    public CompanyTutor(String id, String name, String email, String password, String position, String company){
+        super(id, name, email, password);
+        this.position = position;
+        this.company = company;
     }
-    public void createTeam(Board board) {
-        // Logic to create a new team
-    }
-    public void generatePerformanceReport(PerformanceReport report) {
-        // Logic to generate a performance report
-    }
-    public void approveTask(String taskId) {
-        // Logic to approve a task
-    }
+
     // Getters and setters
     
     public String getPosition() {
@@ -70,15 +70,26 @@ public class CompanyTutor extends User {
     public void setBoards(List<Board> boards) {
         this.boards = boards;
     }
+    public List<Task> getCreatedTasks() {
+        return createdTasks;
+    }
+    public void setCreatedTasks(List<Task> createdTasks) {
+        this.createdTasks = createdTasks;
+    }
 
-        @OneToMany(mappedBy = "createdByTutorId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-        private List<Task> createdTasks = new ArrayList<>();
+    // Métodos específicos de CompanyTutor
 
-        public List<Task> getCreatedTasks() {
-            return createdTasks;
-        }
-        public void setCreatedTasks(List<Task> createdTasks) {
-            this.createdTasks = createdTasks;
-        }
+    public void assignTask(Task task) {
+        // Logic to assign a task to an intern
+    }
+    public void createTeam(Board board) {
+        // Logic to create a new team
+    }
+    public void generatePerformanceReport(PerformanceReport report) {
+        // Logic to generate a performance report
+    }
+    public void approveTask(String taskId) {
+        // Logic to approve a task
+    }
     
 }

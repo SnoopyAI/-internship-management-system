@@ -42,17 +42,18 @@ public class Task {
     )
     private List<Intern> interns = new ArrayList<>();
 
-    // Metodos específicos de Task
+    // Constructors
 
-    public void changeStatus(String newStatus) {
-        this.status = newStatus;
-    }
+    public Task(){}
 
-    public void uploadEvidence(String[] evidence) {
-        // Logic to upload and attach evidence to the task
-    }   
-    public void assignTask(String userId) {
-        this.assingTo = userId;
+    public Task(String id, String title, String description, String status, String dueDate, String assingTo, String createdByTutorId){
+        taskId = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.dueDate = dueDate;
+        this.assingTo = assingTo;
+        this.createdByTutorId = createdByTutorId;
     }
 
     // Getters and Setters
@@ -97,7 +98,7 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public String getAssingTo() {
+    public String getAssignTo() {
         return assingTo;
     }
 
@@ -129,5 +130,17 @@ public class Task {
         this.interns = interns;
     }
 
+    // Metodos específicos de Task
+
+    public void changeStatus(String newStatus) {
+        this.status = newStatus;
+    }
+
+    public void uploadEvidence(String[] evidence) {
+        // Logic to upload and attach evidence to the task
+    }   
+    public void assignTask(String userId) {
+        this.assingTo = userId;
+    }
     
 }

@@ -1,64 +1,84 @@
-package com.informationconfig.spring.bootcamp.bootcamp_proyect.models;
+package com.informationconfig.spring.bootcamp.bootcamp_proyect.dto;
 
-import jakarta.persistence.*;
-
-@MappedSuperclass
-public abstract class User {
-
-    @Id
-    @Column(name = "ID", unique = true, nullable = false, length = 50)
+public class AcademyTutorDTO {
     private String id;
-
-    @Column(name = "Name", nullable = false, length = 50)
     private String name;
-
-    @Column(name = "Email", unique = true, nullable = false, length = 80)
     private String email;
-
-    @Column(name = "Password", nullable = false, length = 20)
     private String password;
+    private String academy;
+    private String department;
 
-    //  constructores, getters, setters
 
-    public User(String id, String name, String email, String password) {
+    public AcademyTutorDTO(String id, String name, String email, String password, String academy, String department) {
         this.id = id;
-        this.name =  name;
+        this.name = name;
         this.email = email;
         this.password = password;
+        this.academy = academy;
+        this.department = department;
     }
 
-    public User() {}
 
     public String getId() {
         return id;
     }
 
+
     public void setId(String id) {
         this.id = id;
     }
+
 
     public String getName() {
         return name;
     }
 
+
     public void setName(String name) {
         this.name = name;
     }
+
 
     public String getEmail() {
         return email;
     }
 
+
     public void setEmail(String email) {
         this.email = email;
     }
+
+
+    public String getAcademy() {
+        return academy;
+    }
+
+
+    public void setAcademy(String academy) {
+        this.academy = academy;
+    }
+
+
+    public String getDepartment() {
+        return department;
+    }
+
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
 
     public String getPassword() {
         return password;
     }
 
+
     public void setPassword(String password) {
         this.password = password;
     }
 
+    
+    
 }
+

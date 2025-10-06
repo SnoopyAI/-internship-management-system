@@ -1,8 +1,12 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.services;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.ListDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Lists;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.ListsRepository;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ListsService {
@@ -13,27 +17,59 @@ public class ListsService {
         this.listsRepository = listsRepository;
     }
 
-    public Lists addList(Lists list) {
-        return listsRepository.addList(list);
+    @Autowired
+    private BoardServices boardServices;
+
+    // Solo crear (no actualizar)
+    public Lists addList(ListDTO dto) {
+        // Validar que la lista no exista
+        if (dto.getId() != null && listsRepository.existsById(dto.getId())) {
+            throw new RuntimeException("Ya existe una lista con el ID: " + dto.getId());
+        }
+        
+        Lists list = new Lists();
+        list.setListId(dto.getId());
+        list.setName(dto.getName());
+        
+        if (dto.getBoardId() != null) {
+            boardServices.getBoardById(dto.getBoardId())
+                .ifPresent(list::setBoard);
+        }
+        return listsRepository.save(list);
     }
 
-    public ArrayList<Lists> getAllLists() {
-        return listsRepository.getAllLists();
+    // Obtener todas las listas
+    public List<Lists> getAllList() {
+        return listsRepository.findAll();
     }
 
+    // Obtener un CompanyTutor por ID
+    public Optional<Lists> getListById(String id) {
+        return listsRepository.findById(id);
+    }
+
+    // Actualizar una lista
+    public Lists updateList(String id, ListDTO dto) {
+        if (listsRepository.existsById(id)) {
+            Lists list = listsRepository.findById(id).get();
+            
+            // Actualizar solo los campos no nulos del DTO
+            if (dto.getName() != null) {
+                list.setName(dto.getName());
+            }
+            // Note: Board relationship should be updated through dedicated endpoints
+            
+            return listsRepository.save(list);
+        }
+        return null;
+    }
+
+    // Eliminar una lista
     public boolean deleteList(String id) {
-        return listsRepository.deleteList(id);
-    }
-
-    public Lists updateList(String id, Lists updatedList) {
-        return listsRepository.updateList(id, updatedList);
-    }
-
-    public Lists getListById(String id) {
-        return listsRepository.getListById(id);
-    }
-
-    public ArrayList<Lists> getAllLists(ArrayList<Lists> lists) {
-        return listsRepository.getAllLists(lists);
+        if (listsRepository.existsById(id)) {
+            listsRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }
