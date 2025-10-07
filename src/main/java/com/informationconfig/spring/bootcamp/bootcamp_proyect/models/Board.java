@@ -10,8 +10,9 @@ import java.util.List;
 public class Board {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_id", length = 50, nullable = false)
-    private String boardId;
+    private Integer boardId;
 
     @Column(name = "name", length = 50, nullable = false)
     private String name;
@@ -43,7 +44,7 @@ public class Board {
 
     public Board() {}
 
-    public Board(String id, String name, String description, LocalDate startdate, LocalDate endDate) {
+    public Board(Integer id, String name, String description, LocalDate startdate, LocalDate endDate) {
         boardId = id;
         this.name = name;
         this.description = description;
@@ -52,8 +53,8 @@ public class Board {
     } 
 
     // Getters y Setters
-    public String getBoardId() { return boardId; }
-    public void setBoardId(String boardId) { this.boardId = boardId; }
+    public Integer getBoardId() { return boardId; }
+    public void setBoardId(Integer boardId) { this.boardId = boardId; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

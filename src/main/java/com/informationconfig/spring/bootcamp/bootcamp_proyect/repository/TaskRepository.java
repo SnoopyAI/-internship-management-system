@@ -4,5 +4,5 @@ import org.springframework.stereotype.Repository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Task;
 
 @Repository
-public interface TaskRepository extends JpaRepository<Task, String> {}
+public interface TaskRepository extends JpaRepository<Task, Integer> {}
 

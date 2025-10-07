@@ -9,8 +9,9 @@ import java.util.List;
 public class Task {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "task_id", length = 50, nullable = false)
-    private String taskId;
+    private Integer taskId;
 
     @Column(name = "Title", length = 100, nullable = false)
     private String title;
@@ -25,10 +26,10 @@ public class Task {
     private String dueDate; // e.g., "2023-12-31"
 
     @Column(name = "Assing_To", length = 50, nullable = true)
-    private String assingTo;
+    private Integer assingTo;
 
     @Column(name = "created_by_tutor_id", length = 50, nullable = false)
-    private String createdByTutorId;
+    private Integer createdByTutorId;
 
     @ManyToOne
     @JoinColumn(name = "list_id", nullable = false, foreignKey = @ForeignKey(name = "FK_LIST_TASK"))
@@ -46,7 +47,7 @@ public class Task {
 
     public Task(){}
 
-    public Task(String id, String title, String description, String status, String dueDate, String assingTo, String createdByTutorId){
+    public Task(Integer id, String title, String description, String status, String dueDate, Integer assingTo, Integer createdByTutorId){
         taskId = id;
         this.title = title;
         this.description = description;
@@ -58,11 +59,11 @@ public class Task {
 
     // Getters and Setters
 
-    public String getTaskId() {
+    public Integer getTaskId() {
         return taskId;
     }
 
-    public void setTaskId(String taskId) {
+    public void setTaskId(Integer taskId) {
         this.taskId = taskId;
     }
 
@@ -98,19 +99,19 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public String getAssignTo() {
+    public Integer getAssignTo() {
         return assingTo;
     }
 
-    public void setAssingTo(String assingTo) {
+    public void setAssingTo(Integer assingTo) {
         this.assingTo = assingTo;
     }
 
-    public String getCreatedByTutorId() {
+    public Integer getCreatedByTutorId() {
         return createdByTutorId;
     }
 
-    public void setCreatedByTutorId(String createdByTutorId) {
+    public void setCreatedByTutorId(Integer createdByTutorId) {
         this.createdByTutorId = createdByTutorId;
     }
 
@@ -139,7 +140,7 @@ public class Task {
     public void uploadEvidence(String[] evidence) {
         // Logic to upload and attach evidence to the task
     }   
-    public void assignTask(String userId) {
+    public void assignTask(Integer userId) {
         this.assingTo = userId;
     }
     

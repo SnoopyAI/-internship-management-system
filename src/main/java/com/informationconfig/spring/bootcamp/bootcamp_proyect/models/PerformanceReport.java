@@ -12,8 +12,9 @@ import jakarta.persistence.*;
 public class PerformanceReport {
     
     @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "ID", length = 50, nullable = false)
-    private String reportId;
+    private Integer reportId;
 
     @Column(name = "Date", length = 50, nullable = false)
     private LocalDate reportDate;
@@ -33,7 +34,7 @@ public class PerformanceReport {
 
     public PerformanceReport() {}
 
-    public PerformanceReport(String id, LocalDate reportDate, String content) {
+    public PerformanceReport(Integer id, LocalDate reportDate, String content) {
         reportId = id;
         this.reportDate = reportDate;
         this.content = content;
@@ -41,10 +42,10 @@ public class PerformanceReport {
 
     // Getters and setters
 
-    public String getReportId() {
+    public Integer getReportId() {
         return reportId;
     }
-    public void setReportId(String reportId) {
+    public void setReportId(Integer reportId) {
         this.reportId = reportId;
     }
     public LocalDate getReportDate() {

@@ -32,7 +32,7 @@ public class CompanyTutor extends User {
 
     public CompanyTutor() {}
 
-    public CompanyTutor(String id, String name, String email, String password, String position, String company){
+    public CompanyTutor(Integer id, String name, String email, String password, String position, String company){
         super(id, name, email, password);
         this.position = position;
         this.company = company;

@@ -4,4 +4,4 @@ import org.springframework.stereotype.Repository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Lists;
 
 @Repository
-public interface ListsRepository extends JpaRepository<Lists, String> {}
+public interface ListsRepository extends JpaRepository<Lists, Integer> {}

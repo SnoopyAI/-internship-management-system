@@ -31,7 +31,8 @@ public class InternController {
     public InternDTO add(@Valid @RequestBody InternDTO dto) {
     Intern intern = internService.addIntern(dto);
         return new InternDTO(
-            intern.getId(),
+
+            
             intern.getName(),
             intern.getEmail(),
             intern.getPassword(),
@@ -54,10 +55,10 @@ public class InternController {
     public List<InternDTO>tAllInterns() {
     List<Intern> intern = internService.getAllInterns();
         return intern.stream().map(interns -> new InternDTO(
+
             interns.getId(),
             interns.getName(),
             interns.getEmail(),
-            interns.getPassword(),
             interns.getUniversity(),
             interns.getCareer(),
             interns.getSemester(),
@@ -68,13 +69,12 @@ public class InternController {
     }
 
       @GetMapping("/{id}")
-    public Optional<InternDTO> getInternById(@PathVariable String id) {
+    public Optional<InternDTO> getInternById(@PathVariable Integer id) {
         return internService.getInternById(id)
             .map(intern -> new InternDTO(
                 intern.getId(),
                 intern.getName(),
                 intern.getEmail(),
-                intern.getPassword(),
                 intern.getUniversity(),
                 intern.getCareer(),
                 intern.getSemester(),
@@ -85,7 +85,7 @@ public class InternController {
     }
 
     @PatchMapping("/{id}")
-    public InternDTO updateIntern(@PathVariable String id, @Valid @RequestBody InternDTO dto) {
+    public InternDTO updateIntern(@PathVariable Integer id, @Valid @RequestBody InternDTO dto) {
         Intern existing = this.internService.getInternById(id).orElse(null);
         if (existing == null) {
             return null;
@@ -93,7 +93,8 @@ public class InternController {
         
         Intern updated = this.internService.updateIntern(id, dto);
         return new InternDTO(
-            updated.getId(),
+            
+            
             updated.getName(),
             updated.getEmail(),
             updated.getPassword(),
@@ -107,7 +108,7 @@ public class InternController {
     }
     
     @DeleteMapping("/{id}")
-    public boolean deleteIntern(@PathVariable String id) {
+    public boolean deleteIntern(@PathVariable Integer id) {
         return this.internService.deleteIntern(id);
     }
 

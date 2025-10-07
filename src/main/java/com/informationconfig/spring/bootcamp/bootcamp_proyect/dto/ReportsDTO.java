@@ -3,24 +3,32 @@ package com.informationconfig.spring.bootcamp.bootcamp_proyect.dto;
 import java.time.LocalDate;
 
 public class ReportsDTO {
-    private String id;
+    private Integer id;
     private LocalDate reportDate;
     private String content;
-    private String academyTutorId;
-    private String companyTutorId;
+    private Integer academyTutorId;
+    private Integer companyTutorId;
 
-    
-    public ReportsDTO(String id, LocalDate reportDate, String content, String academyTutorId, String companyTutorId) {
+    public ReportsDTO(LocalDate reportDate, String content, Integer academyTutorId, Integer companyTutorId) {
+
+        this.reportDate = reportDate;
+        this.content = content;
+        this.academyTutorId = academyTutorId;
+        this.companyTutorId = companyTutorId;
+    }
+
+    public ReportsDTO(Integer id, LocalDate reportDate, String content, Integer academyTutorId, Integer companyTutorId) {
         this.id = id;
         this.reportDate = reportDate;
         this.content = content;
         this.academyTutorId = academyTutorId;
         this.companyTutorId = companyTutorId;
     }
-    public String getId() {
+
+    public Integer getId() {
         return id;
     }
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
     public LocalDate getReportDate() {
@@ -35,16 +43,16 @@ public class ReportsDTO {
     public void setContent(String content) {
         this.content = content;
     }
-    public String getAcademyTutorId() {
+    public Integer getAcademyTutorId() {
         return academyTutorId;
     }
-    public void setAcademyTutorId(String academyTutorId) {
+    public void setAcademyTutorId(Integer academyTutorId) {
         this.academyTutorId = academyTutorId;
     }
-    public String getCompanyTutorId() {
+    public Integer getCompanyTutorId() {
         return companyTutorId;
     }
-    public void setCompanyTutorId(String companyTutorId) {
+    public void setCompanyTutorId(Integer companyTutorId) {
         this.companyTutorId = companyTutorId;
     }
 

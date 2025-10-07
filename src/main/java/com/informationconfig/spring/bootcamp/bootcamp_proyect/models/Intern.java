@@ -37,7 +37,7 @@ public class Intern extends User {
     // Constructores
     public Intern() {}
 
-    public Intern(String id, String name, String email, String password, String university, String career, Integer semester) {
+    public Intern(Integer id, String name, String email, String password, String university, String career, Integer semester) {
         super(id, name, email, password);
         this.university = university;
         this.career = career;

@@ -56,12 +56,12 @@ public class PerformanceReportService {
     }
 
     // Obtener un reporte por ID
-    public Optional<PerformanceReport> getReportById(String id) {
+    public Optional<PerformanceReport> getReportById(Integer id) {
         return performanceReportRepository.findById(id);
     }
 
     // Actualizar un reporte
-    public PerformanceReport updateReport(String id, ReportsDTO dto) {
+    public PerformanceReport updateReport(Integer id, ReportsDTO dto) {
         if (performanceReportRepository.existsById(id)) {
             PerformanceReport report = performanceReportRepository.findById(id).get();
             
@@ -80,7 +80,7 @@ public class PerformanceReportService {
     }
 
     // Eliminar un reporte
-    public boolean deleteReport(String id) {
+    public boolean deleteReport(Integer id) {
         if (performanceReportRepository.existsById(id)) {
             performanceReportRepository.deleteById(id);
             return true;

@@ -44,12 +44,12 @@ public class ListsService {
     }
 
     // Obtener un CompanyTutor por ID
-    public Optional<Lists> getListById(String id) {
+    public Optional<Lists> getListById(Integer id) {
         return listsRepository.findById(id);
     }
 
     // Actualizar una lista
-    public Lists updateList(String id, ListDTO dto) {
+    public Lists updateList(Integer id, ListDTO dto) {
         if (listsRepository.existsById(id)) {
             Lists list = listsRepository.findById(id).get();
             
@@ -65,7 +65,7 @@ public class ListsService {
     }
 
     // Eliminar una lista
-    public boolean deleteList(String id) {
+    public boolean deleteList(Integer id) {
         if (listsRepository.existsById(id)) {
             listsRepository.deleteById(id);
             return true;

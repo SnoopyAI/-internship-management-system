@@ -31,7 +31,7 @@ public class CompanyTutorController {
     public CompanyTutorDTO add(@RequestBody CompanyTutorDTO dto) {
         CompanyTutor companyTutor = companyTutorService.addCompanyTutor(dto);
         return new CompanyTutorDTO(
-            companyTutor.getId(),
+            
             companyTutor.getName(),
             companyTutor.getEmail(),
             companyTutor.getPassword(),
@@ -49,30 +49,30 @@ public class CompanyTutorController {
     public List<CompanyTutorDTO> getAllCompanyTutors() {
         List<CompanyTutor> tutors = companyTutorService.getAllCompanyTutors();
         return tutors.stream().map(t -> new CompanyTutorDTO(
+
                     t.getId(),
                     t.getName(),
                     t.getEmail(),
-                    t.getPassword(),
                     t.getPosition(),
                     t.getCompany()
             )).toList();
     }
 
     @GetMapping("/{id}")
-    public Optional<CompanyTutorDTO> getCompanyTutorById(@PathVariable String id) {
+    public Optional<CompanyTutorDTO> getCompanyTutorById(@PathVariable Integer id) {
         return companyTutorService.getCompanyTutorById(id)
             .map(t -> new CompanyTutorDTO(
+
                     t.getId(),
                     t.getName(),
                     t.getEmail(),
-                    t.getPassword(),
                     t.getPosition(),
                     t.getCompany()
             ));
     }
 
     @PatchMapping("/{id}")
-    public CompanyTutorDTO updateCompanyTutor(@PathVariable String id, @Valid @RequestBody CompanyTutorDTO dto) {
+    public CompanyTutorDTO updateCompanyTutor(@PathVariable Integer id, @Valid @RequestBody CompanyTutorDTO dto) {
         CompanyTutor existing = this.companyTutorService.getCompanyTutorById(id).orElse(null);
         if (existing == null) {
             return null;
@@ -80,7 +80,7 @@ public class CompanyTutorController {
         
         CompanyTutor updated = this.companyTutorService.updateCompanyTutor(id, dto);
         return new CompanyTutorDTO(
-            updated.getId(),
+            
             updated.getName(),
             updated.getEmail(),
             updated.getPassword(),
@@ -90,7 +90,7 @@ public class CompanyTutorController {
     }
     
     @DeleteMapping("/{id}")
-    public boolean deleteCompanyTutor(@PathVariable String id) {
+    public boolean deleteCompanyTutor(@PathVariable Integer id) {
         return this.companyTutorService.deleteCompanyTutor(id);
     }
 }

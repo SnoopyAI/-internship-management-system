@@ -30,7 +30,7 @@ public class PerformanceReportController {
     public ReportsDTO add(@Valid @RequestBody ReportsDTO dto) {
         PerformanceReport reports = performanceReportService.addReport(dto);
         return new ReportsDTO(
-            reports.getReportId(),
+
             reports.getReportDate(),
             reports.getContent(),
             reports.getAcademyTutor() != null ? reports.getAcademyTutor().getId() : null,
@@ -48,6 +48,7 @@ public class PerformanceReportController {
     public List<ReportsDTO> getAllPerformanceReports() {
         List<PerformanceReport> reports = performanceReportService.getAllReports();
         return reports.stream().map(report -> new ReportsDTO(
+
             report.getReportId(),
             report.getReportDate(),
             report.getContent(),
@@ -57,9 +58,10 @@ public class PerformanceReportController {
     }
 
     @GetMapping("/{id}")
-    public Optional<ReportsDTO> getPerformanceReportById(@PathVariable String id) {
+    public Optional<ReportsDTO> getPerformanceReportById(@PathVariable Integer id) {
         return performanceReportService.getReportById(id)
         .map(r -> new ReportsDTO(
+
             r.getReportId(),
             r.getReportDate(),
             r.getContent(),
@@ -69,7 +71,7 @@ public class PerformanceReportController {
     }
 
     @PatchMapping("/{id}")
-    public ReportsDTO updatePerformanceReport(@PathVariable String id, @Valid @RequestBody ReportsDTO dto) {
+    public ReportsDTO updatePerformanceReport(@PathVariable Integer id, @Valid @RequestBody ReportsDTO dto) {
         PerformanceReport existing = this.performanceReportService.getReportById(id).orElse(null);
         if (existing == null) {
             return null;
@@ -86,7 +88,7 @@ public class PerformanceReportController {
     }
     
     @DeleteMapping("/{id}")
-    public boolean deletePerformanceReport(@PathVariable String id) {
+    public boolean deletePerformanceReport(@PathVariable Integer id) {
         return this.performanceReportService.deleteReport(id);
     }
 }

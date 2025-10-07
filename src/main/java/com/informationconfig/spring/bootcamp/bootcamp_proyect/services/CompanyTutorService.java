@@ -42,12 +42,12 @@ public class CompanyTutorService {
     }
 
     // Obtener un CompanyTutor por ID
-    public Optional<CompanyTutor> getCompanyTutorById(String id) {
+    public Optional<CompanyTutor> getCompanyTutorById(Integer id) {
         return companyTutorRepository.findById(id);
     }
 
     // Actualizar un CompanyTutor
-    public CompanyTutor updateCompanyTutor(String id, CompanyTutorDTO dto) {
+    public CompanyTutor updateCompanyTutor(Integer id, CompanyTutorDTO dto) {
         if (companyTutorRepository.existsById(id)) {
             CompanyTutor companyTutor = companyTutorRepository.findById(id).get();
             
@@ -74,7 +74,7 @@ public class CompanyTutorService {
     }
 
     // Eliminar un CompanyTutor
-    public boolean deleteCompanyTutor(String id) {
+    public boolean deleteCompanyTutor(Integer id) {
         if (companyTutorRepository.existsById(id)) {
             companyTutorRepository.deleteById(id);
             return true;

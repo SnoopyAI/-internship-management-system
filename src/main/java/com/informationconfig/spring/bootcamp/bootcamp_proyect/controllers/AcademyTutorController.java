@@ -30,7 +30,7 @@ public class AcademyTutorController {
     public AcademyTutorDTO add(@Valid @RequestBody AcademyTutorDTO dto) {
     AcademyTutor academyTutor = academyTutorService.addAcademyTutor(dto);
         return new AcademyTutorDTO(
-            academyTutor.getId(),
+
             academyTutor.getName(),
             academyTutor.getEmail(),
             academyTutor.getPassword(),
@@ -48,10 +48,10 @@ public class AcademyTutorController {
     public List<AcademyTutorDTO> getAllAcademyTutors() {
         List<AcademyTutor> tutors = academyTutorService.getAllAcademyTutors();
         return tutors.stream().map(t -> new AcademyTutorDTO(
+            
                     t.getId(),
                     t.getName(),
                     t.getEmail(),
-                    t.getPassword(),
                     t.getAcademy(),
                     t.getDepartment()
             )).toList();
@@ -59,20 +59,20 @@ public class AcademyTutorController {
 
 
       @GetMapping("/{id}")
-    public Optional<AcademyTutorDTO>tAcademyTutorById(@PathVariable String id) {
+    public Optional<AcademyTutorDTO>tAcademyTutorById(@PathVariable Integer id) {
         return academyTutorService.getAcademyTutorById(id)
             .map(t -> new AcademyTutorDTO(
+
                     t.getId(),
                     t.getName(),
                     t.getEmail(),
-                    t.getPassword(),
                     t.getAcademy(),
                     t.getDepartment()
             ));
     }
 
     @PatchMapping("/{id}")
-    public AcademyTutorDTO updateAcademyTutor(@PathVariable String id, @Valid @RequestBody AcademyTutorDTO dto) {
+    public AcademyTutorDTO updateAcademyTutor(@PathVariable Integer id, @Valid @RequestBody AcademyTutorDTO dto) {
         AcademyTutor existing = this.academyTutorService.getAcademyTutorById(id).orElse(null);
         if (existing == null) {
             return null;
@@ -80,7 +80,7 @@ public class AcademyTutorController {
         
         AcademyTutor updated = this.academyTutorService.updateAcademyTutor(id, dto);
         return new AcademyTutorDTO(
-            updated.getId(),
+            
             updated.getName(),
             updated.getEmail(),
             updated.getPassword(),
@@ -90,7 +90,7 @@ public class AcademyTutorController {
     }
     
     @DeleteMapping("/{id}")
-    public boolean deleteAcademyTutor(@PathVariable String id) {
+    public boolean deleteAcademyTutor(@PathVariable Integer id) {
         return this.academyTutorService.deleteAcademyTutor(id);
     }
 }

@@ -33,7 +33,7 @@ public class AcademyTutor extends User {
 
         public AcademyTutor() {}
 
-        public AcademyTutor(String id, String name, String email, String password, String academy, String department){
+        public AcademyTutor(Integer id, String name, String email, String password, String academy, String department){
             super(id, name, email, password);
             this.academy = academy;
             this.department = department;

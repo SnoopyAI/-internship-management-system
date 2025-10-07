@@ -62,12 +62,12 @@ public class BoardServices {
     }
 
     // Obtener un Board por ID
-    public Optional<Board> getBoardById(String id) {
+    public Optional<Board> getBoardById(Integer id) {
         return boardRepository.findById(id);
     }
 
     // Actualizar un Board
-    public Board updateBoard(String id, BoardDTO dto) {
+    public Board updateBoard(Integer id, BoardDTO dto) {
         if (boardRepository.existsById(id)) {
             Board board = boardRepository.findById(id).get();
             
@@ -92,7 +92,7 @@ public class BoardServices {
     }
 
     // Eliminar un Board por ID
-    public boolean deleteBoard(String id) {
+    public boolean deleteBoard(Integer id) {
         if (boardRepository.existsById(id)) {
             boardRepository.deleteById(id);
             return true;

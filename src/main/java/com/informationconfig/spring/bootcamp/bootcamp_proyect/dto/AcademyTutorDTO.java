@@ -1,7 +1,7 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.dto;
 
 public class AcademyTutorDTO {
-    private String id;
+    private Integer id;
     private String name;
     private String email;
     private String password;
@@ -9,8 +9,7 @@ public class AcademyTutorDTO {
     private String department;
 
 
-    public AcademyTutorDTO(String id, String name, String email, String password, String academy, String department) {
-        this.id = id;
+    public AcademyTutorDTO(String name, String email, String password, String academy, String department) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -18,13 +17,26 @@ public class AcademyTutorDTO {
         this.department = department;
     }
 
+    
 
-    public String getId() {
+
+    public AcademyTutorDTO(Integer id, String name, String email, String academy, String department) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.academy = academy;
+        this.department = department;
+    }
+
+
+
+
+    public Integer getId() {
         return id;
     }
 
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

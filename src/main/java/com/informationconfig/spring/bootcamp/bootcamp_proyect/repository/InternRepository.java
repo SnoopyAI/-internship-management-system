@@ -4,4 +4,4 @@ import org.springframework.stereotype.Repository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Intern;
 
 @Repository
-public interface InternRepository extends JpaRepository<Intern, String>{}
+public interface InternRepository extends JpaRepository<Intern, Integer>{}

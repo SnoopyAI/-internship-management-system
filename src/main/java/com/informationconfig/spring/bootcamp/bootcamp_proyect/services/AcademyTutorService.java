@@ -42,12 +42,12 @@ public class AcademyTutorService {
     }
 
     // Buscar un tutor por ID
-    public Optional<AcademyTutor> getAcademyTutorById(String id) {
+    public Optional<AcademyTutor> getAcademyTutorById(Integer id) {
         return academyTutorRepository.findById(id);
     }
 
     // Actualizar un tutor existente
-    public AcademyTutor updateAcademyTutor(String id, AcademyTutorDTO dto) {
+    public AcademyTutor updateAcademyTutor(Integer id, AcademyTutorDTO dto) {
         // Opcional: validar si existe antes
         if (academyTutorRepository.existsById(id)) {
             AcademyTutor academyTutor = academyTutorRepository.findById(id).get();
@@ -75,7 +75,7 @@ public class AcademyTutorService {
     }
 
     // Eliminar un tutor por ID
-    public boolean deleteAcademyTutor(String id) {
+    public boolean deleteAcademyTutor(Integer id) {
         if (academyTutorRepository.existsById(id)) {
             academyTutorRepository.deleteById(id);
             return true;

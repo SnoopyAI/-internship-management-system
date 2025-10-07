@@ -74,12 +74,12 @@ public class InternService {
     }
 
     // Obtener Interno por ID
-    public Optional<Intern> getInternById(String id) {
+    public Optional<Intern> getInternById(Integer id) {
         return internRepository.findById(id);
     }
 
     // Actualizar Interno
-     public Intern updateIntern(String id, InternDTO dto) {
+     public Intern updateIntern(Integer id, InternDTO dto) {
         if (internRepository.existsById(id)) {
             Intern intern = internRepository.findById(id).get();
             
@@ -110,7 +110,7 @@ public class InternService {
     }
 
     // Eliminar un Interno
-    public boolean deleteIntern(String id) {
+    public boolean deleteIntern(Integer id) {
         if (internRepository.existsById(id)) {
             internRepository.deleteById(id);
             return true;
