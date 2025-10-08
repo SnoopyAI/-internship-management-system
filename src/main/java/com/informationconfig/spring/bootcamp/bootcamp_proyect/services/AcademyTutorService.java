@@ -27,11 +27,10 @@ public class AcademyTutorService {
         }
         
         AcademyTutor academyTutor = new AcademyTutor();
-        academyTutor.setId(dto.getId());
+        
         academyTutor.setName(dto.getName());
         academyTutor.setEmail(dto.getEmail());
         academyTutor.setPassword(dto.getPassword());
-        academyTutor.setAcademy(dto.getAcademy());
         academyTutor.setDepartment(dto.getDepartment());
         return academyTutorRepository.save(academyTutor);
     }
@@ -61,9 +60,6 @@ public class AcademyTutorService {
             }
             if (dto.getPassword() != null) {
                 academyTutor.setPassword(dto.getPassword());
-            }
-            if (dto.getAcademy() != null) {
-                academyTutor.setAcademy(dto.getAcademy());
             }
             if (dto.getDepartment() != null) {
                 academyTutor.setDepartment(dto.getDepartment());

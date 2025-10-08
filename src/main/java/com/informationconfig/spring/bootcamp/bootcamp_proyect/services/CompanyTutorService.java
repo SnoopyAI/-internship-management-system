@@ -1,10 +1,12 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.CompanyTutorDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.CompanyTutor;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.CompanyTutorRepository;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.CompaniesRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,9 @@ public class CompanyTutorService {
         this.companyTutorRepository = companyTutorRepository;
     }
 
+    @Autowired
+    private CompaniesRepository companiesRepository;
+
     // Solo crear (no actualizar)
     public CompanyTutor addCompanyTutor(CompanyTutorDTO dto) {
         // Validar que el tutor no exista
@@ -26,12 +31,16 @@ public class CompanyTutorService {
         }
         
         CompanyTutor companyTutor = new CompanyTutor();
-        companyTutor.setId(dto.getId());
+        
         companyTutor.setName(dto.getName());
         companyTutor.setEmail(dto.getEmail());
         companyTutor.setPassword(dto.getPassword());
         companyTutor.setPosition(dto.getPosition());
-        companyTutor.setCompany(dto.getCompany());
+        
+        if (dto.getId() != null) {
+            companiesRepository.findById(dto.getId())
+                .ifPresent(companyTutor::setCompanyId);
+        }
         
         return companyTutorRepository.save(companyTutor);
     }
@@ -64,9 +73,7 @@ public class CompanyTutorService {
             if (dto.getPosition() != null) {
                 companyTutor.setPosition(dto.getPosition());
             }
-            if (dto.getCompany() != null) {
-                companyTutor.setCompany(dto.getCompany());
-            }
+           
             
             return companyTutorRepository.save(companyTutor);
         }

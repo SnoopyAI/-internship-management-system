@@ -8,6 +8,7 @@ import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.Company
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.AcademyTutorRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.BoardRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.InternRepository;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.UniversitiesRepository;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,9 @@ public class InternService {
     @Autowired
     private BoardRepository boardRepository;
 
+    @Autowired
+    private UniversitiesRepository universitiesRepository;
+
     public Intern addIntern(InternDTO dto) {
         // Validar que el interno no exista
         if (dto.getId() != null && internRepository.existsById(dto.getId())) {
@@ -37,11 +41,9 @@ public class InternService {
         }
         
         Intern intern = new Intern();
-        intern.setId(dto.getId());
         intern.setName(dto.getName());
         intern.setEmail(dto.getEmail());
         intern.setPassword(dto.getPassword());
-        intern.setUniversity(dto.getUniversity());
         intern.setCareer(dto.getCareer());
         intern.setSemester(dto.getSemester());
         
@@ -61,6 +63,11 @@ public class InternService {
     if (dto.getBoardId() != null) {
         boardRepository.findById(dto.getBoardId())
             .ifPresent(intern::setBoard);
+    }
+
+    if (dto.getId() != null) {
+        universitiesRepository.findById(dto.getId())
+            .ifPresent(intern::setUniversity);
     }
 
     return internRepository.save(intern);
@@ -93,9 +100,7 @@ public class InternService {
             if (dto.getPassword() != null) {
                 intern.setPassword(dto.getPassword());
             }
-            if (dto.getUniversity() != null) {
-                intern.setUniversity(dto.getUniversity());
-            }
+           
             if (dto.getCareer() != null) {
                 intern.setCareer(dto.getCareer());
             }

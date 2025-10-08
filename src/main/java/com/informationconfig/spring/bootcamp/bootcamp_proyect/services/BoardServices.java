@@ -35,7 +35,7 @@ public class BoardServices {
         }
         
         Board board = new Board();
-        board.setBoardId(dto.getId());
+        
         board.setName(dto.getName());
         board.setDescription(dto.getDescription());
         board.setStartDate(dto.getStartDate());

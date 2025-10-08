@@ -28,7 +28,7 @@ public class ListsService {
         }
         
         Lists list = new Lists();
-        list.setListId(dto.getId());
+        
         list.setName(dto.getName());
         
         if (dto.getBoardId() != null) {

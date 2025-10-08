@@ -34,8 +34,8 @@ public class AcademyTutorController {
             academyTutor.getName(),
             academyTutor.getEmail(),
             academyTutor.getPassword(),
-            academyTutor.getAcademy(),
-            academyTutor.getDepartment()
+            academyTutor.getDepartment(),
+            academyTutor.getUniversity() != null ? academyTutor.getUniversity().getUniversityId() : null 
         );
     }
 
@@ -48,12 +48,12 @@ public class AcademyTutorController {
     public List<AcademyTutorDTO> getAllAcademyTutors() {
         List<AcademyTutor> tutors = academyTutorService.getAllAcademyTutors();
         return tutors.stream().map(t -> new AcademyTutorDTO(
-            
+
                     t.getId(),
                     t.getName(),
                     t.getEmail(),
-                    t.getAcademy(),
-                    t.getDepartment()
+                    t.getDepartment(),
+                    t.getUniversity() != null ? t.getUniversity().getUniversityId() : null
             )).toList();
     }
 
@@ -66,8 +66,9 @@ public class AcademyTutorController {
                     t.getId(),
                     t.getName(),
                     t.getEmail(),
-                    t.getAcademy(),
-                    t.getDepartment()
+                    t.getDepartment(),
+                    t.getUniversity() != null ? t.getUniversity().getUniversityId() : null
+                    
             ));
     }
 
@@ -84,8 +85,9 @@ public class AcademyTutorController {
             updated.getName(),
             updated.getEmail(),
             updated.getPassword(),
-            updated.getAcademy(),
-            updated.getDepartment()
+            updated.getDepartment(),
+            updated.getUniversity() != null ? updated.getUniversity().getUniversityId() : null
+            
         );
     }
     

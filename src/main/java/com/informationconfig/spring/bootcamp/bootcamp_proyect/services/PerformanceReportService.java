@@ -34,7 +34,6 @@ public class PerformanceReportService {
         
         PerformanceReport report =  new PerformanceReport();
         report.setContent(dto.getContent());
-        report.setReportId(dto.getId());
         report.setReportDate(dto.getReportDate());
 
     if (dto.getAcademyTutorId() != null) {

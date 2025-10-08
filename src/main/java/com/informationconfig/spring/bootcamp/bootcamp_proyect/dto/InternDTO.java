@@ -5,14 +5,14 @@ public class InternDTO {
     private String name;
     private String email;
     private String password;
-    private String university;
+    private Integer university;
     private String career;
     private int semester;
     private Integer academyTutorId;
     private Integer companyTutorId;
     private Integer boardId;
 
-    public InternDTO(String name, String email, String password, String university, String career,
+    public InternDTO(String name, String email, String password, Integer university, String career,
             int semester, Integer academyTutorId, Integer companyTutorId, Integer boardId) {
         this.name = name;
         this.email = email;
@@ -25,7 +25,7 @@ public class InternDTO {
         this.boardId = boardId;
     }
 
-    public InternDTO(Integer id, String name, String email, String university, String career,
+    public InternDTO(Integer id, String name, String email, Integer university, String career,
             int semester, Integer academyTutorId, Integer companyTutorId, Integer boardId) {
         this.id = id;
         this.name = name;
@@ -70,11 +70,11 @@ public class InternDTO {
         this.password = password;
     }
 
-    public String getUniversity() {
+    public Integer getUniversity() {
         return university;
     }
 
-    public void setUniversity(String university) {
+    public void setUniversity(Integer university) {
         this.university = university;
     }
 

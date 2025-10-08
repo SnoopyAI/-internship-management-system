@@ -10,9 +10,6 @@ import java.util.List;
 
 public class AcademyTutor extends User {
 
-        
-        @Column(name = "Academy", length = 100, nullable = false)
-        private String academy;
 
         @Column(name = "Department", length = 100, nullable = true)
         private String department;
@@ -29,13 +26,16 @@ public class AcademyTutor extends User {
         @OneToMany(mappedBy = "academyTutor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
         private List<Board> boards = new ArrayList<>();
 
+        @ManyToOne
+        @JoinColumn(name = "university_id", nullable = false, foreignKey = @ForeignKey(name = "FK_UNIVERSITY_ACADEMY_TUTOR"))
+        private Universities university;
+
         // Constructors
 
         public AcademyTutor() {}
 
-        public AcademyTutor(Integer id, String name, String email, String password, String academy, String department){
+        public AcademyTutor(Integer id, String name, String email, String password, String department){
             super(id, name, email, password);
-            this.academy = academy;
             this.department = department;
         }
 
@@ -47,13 +47,7 @@ public class AcademyTutor extends User {
         public void setCreatedTasks(List<Task> createdTasks) {
             this.createdTasks = createdTasks;
         }
-        
-        public String getAcademy() {
-            return academy;
-        }
-        public void setAcademy(String academy) {
-            this.academy = academy;
-        }
+     
         public String getDepartment() {
             return department;
         }
@@ -83,6 +77,14 @@ public class AcademyTutor extends User {
         }
         public void setBoards(List<Board> boards) {
             this.boards = boards;
+        }
+
+        public Universities getUniversity() {
+            return university;
+        }
+
+        public void setUniversity(Universities university) {
+            this.university = university;
         }
   
 }

@@ -36,7 +36,7 @@ public class CompanyTutorController {
             companyTutor.getEmail(),
             companyTutor.getPassword(),
             companyTutor.getPosition(),
-            companyTutor.getCompany()
+            companyTutor.getCompanyId() != null ? companyTutor.getCompanyId().getCompanyId() : null
         );
     }
 
@@ -54,7 +54,7 @@ public class CompanyTutorController {
                     t.getName(),
                     t.getEmail(),
                     t.getPosition(),
-                    t.getCompany()
+                    t.getCompanyId() != null ? t.getCompanyId().getCompanyId() : null
             )).toList();
     }
 
@@ -67,7 +67,7 @@ public class CompanyTutorController {
                     t.getName(),
                     t.getEmail(),
                     t.getPosition(),
-                    t.getCompany()
+                    t.getCompanyId() != null ? t.getCompanyId().getCompanyId() : null
             ));
     }
 
@@ -85,7 +85,7 @@ public class CompanyTutorController {
             updated.getEmail(),
             updated.getPassword(),
             updated.getPosition(),
-            updated.getCompany()
+            updated.getCompanyId() != null ? updated.getCompanyId().getCompanyId() : null
         );
     }
     

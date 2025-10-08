@@ -7,22 +7,22 @@ public class CompanyTutorDTO {
     private String email;
     private String password;
     private String position;
-    private String company;
+    private Integer companyId;
 
-    public CompanyTutorDTO(String name, String email, String password, String position, String company) {
+    public CompanyTutorDTO(String name, String email, String password, String position, Integer companyId) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.position = position;
-        this.company = company;
+        this.companyId = companyId;
     }
 
-    public CompanyTutorDTO(Integer id, String name, String email, String position, String company) {
+    public CompanyTutorDTO(Integer id, String name, String email, String position, Integer companyId) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.position = position;
-        this.company = company;
+        this.companyId = companyId;
     }
 
     public Integer getId() {
@@ -65,12 +65,12 @@ public class CompanyTutorDTO {
         this.position = position;
     }
 
-    public String getCompany() {
-        return company;
+    public Integer getCompanyId() {
+        return companyId;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    public void setCompanyId(Integer companyId) {
+        this.companyId = companyId;
     }
 
     

@@ -67,7 +67,7 @@ public Task addTask(TaskRequestDTO dto, Integer tutorId) {
     }
 
     Task newTask = new Task();
-    newTask.setTaskId(dto.getId());
+    
     newTask.setTitle(dto.getTitle());
     newTask.setDescription(dto.getDescription());
     newTask.setDueDate(dto.getDueDate());

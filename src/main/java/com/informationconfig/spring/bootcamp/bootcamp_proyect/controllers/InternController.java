@@ -36,7 +36,7 @@ public class InternController {
             intern.getName(),
             intern.getEmail(),
             intern.getPassword(),
-            intern.getUniversity(),
+            intern.getUniversity() != null ? intern.getUniversity().getUniversityId() : null,
             intern.getCareer(),
             intern.getSemester(),
             intern.getAcademyTutor() != null ? intern.getAcademyTutor().getId() : null,
@@ -59,7 +59,7 @@ public class InternController {
             interns.getId(),
             interns.getName(),
             interns.getEmail(),
-            interns.getUniversity(),
+            interns.getUniversity() != null ? interns.getUniversity().getUniversityId() : null,
             interns.getCareer(),
             interns.getSemester(),
             interns.getAcademyTutor() != null ? interns.getAcademyTutor().getId() : null,
@@ -72,10 +72,11 @@ public class InternController {
     public Optional<InternDTO> getInternById(@PathVariable Integer id) {
         return internService.getInternById(id)
             .map(intern -> new InternDTO(
+
                 intern.getId(),
                 intern.getName(),
                 intern.getEmail(),
-                intern.getUniversity(),
+                intern.getUniversity() != null ? intern.getUniversity().getUniversityId() : null,
                 intern.getCareer(),
                 intern.getSemester(),
                 intern.getAcademyTutor() != null ? intern.getAcademyTutor().getId() : null,
@@ -98,7 +99,7 @@ public class InternController {
             updated.getName(),
             updated.getEmail(),
             updated.getPassword(),
-            updated.getUniversity(),
+            updated.getUniversity() != null ? updated.getUniversity().getUniversityId() : null,
             updated.getCareer(),
             updated.getSemester(),
             updated.getAcademyTutor() != null ? updated.getAcademyTutor().getId() : null,
