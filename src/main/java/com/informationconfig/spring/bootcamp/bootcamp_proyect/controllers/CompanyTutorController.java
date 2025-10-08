@@ -40,10 +40,6 @@ public class CompanyTutorController {
         );
     }
 
-    @PostMapping("/createVariable")
-    public List<CompanyTutor> createVariable(@RequestBody List<CompanyTutor> companyTutors) {
-        return this.companyTutorService.getAllCompanyTutors();
-    }
     
     @GetMapping("/ReadAll")
     public List<CompanyTutorDTO> getAllCompanyTutors() {

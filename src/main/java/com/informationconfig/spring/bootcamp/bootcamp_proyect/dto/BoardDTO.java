@@ -32,6 +32,9 @@ public class BoardDTO {
         this.companyTutorId = companyTutorId;
     }
 
+    public BoardDTO() {
+    }
+
     public Integer getId() {
         return id;
     }

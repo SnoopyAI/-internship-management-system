@@ -1,26 +1,26 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.services;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.InternDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Intern;
-import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.CompanyTutorRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.AcademyTutorRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.BoardRepository;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.CompanyTutorRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.InternRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.UniversitiesRepository;
+
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class InternService {
-    
     private final InternRepository internRepository;
 
-    public InternService(InternRepository internRepository) {
-        this.internRepository = internRepository;
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private CompanyTutorRepository companyTutorRepository;
@@ -34,6 +34,10 @@ public class InternService {
     @Autowired
     private UniversitiesRepository universitiesRepository;
 
+    public InternService(InternRepository internRepository) {
+        this.internRepository = internRepository;
+    }
+
     public Intern addIntern(InternDTO dto) {
         // Validar que el interno no exista
         if (dto.getId() != null && internRepository.existsById(dto.getId())) {
@@ -43,7 +47,7 @@ public class InternService {
         Intern intern = new Intern();
         intern.setName(dto.getName());
         intern.setEmail(dto.getEmail());
-        intern.setPassword(dto.getPassword());
+        intern.setPassword(passwordEncoder.encode(dto.getPassword()));
         intern.setCareer(dto.getCareer());
         intern.setSemester(dto.getSemester());
         
@@ -73,8 +77,6 @@ public class InternService {
     return internRepository.save(intern);
 }
 
-    
-
     // Botener todos los Internos
     public List<Intern> getAllInterns() {
         return internRepository.findAll();
@@ -98,7 +100,7 @@ public class InternService {
                 intern.setEmail(dto.getEmail());
             }
             if (dto.getPassword() != null) {
-                intern.setPassword(dto.getPassword());
+                intern.setPassword(passwordEncoder.encode(dto.getPassword()));
             }
            
             if (dto.getCareer() != null) {

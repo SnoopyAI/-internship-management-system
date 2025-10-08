@@ -13,7 +13,6 @@ public class CompanyTutor extends User {
     @Column(name = "position", length = 100, nullable = true)
     private String position;
 
-
     @OneToMany(mappedBy = "companyTutor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Intern> intern = new ArrayList<>();
 

@@ -13,7 +13,7 @@ public class PerformanceReport {
     
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", length = 50, nullable = false)
+    @Column(name = "ID", length = 50, nullable = false, unique = true)
     private Integer reportId;
 
     @Column(name = "Date", length = 50, nullable = false)

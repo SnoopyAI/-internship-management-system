@@ -10,7 +10,7 @@ public class Lists {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "list_id", length = 50, nullable = false)
+    @Column(name = "list_id", length = 50, nullable = false, unique = true)
     private Integer listId;
 
     @Column(name = "name", length = 50, nullable = false)

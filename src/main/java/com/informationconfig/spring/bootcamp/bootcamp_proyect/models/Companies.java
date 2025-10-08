@@ -20,16 +20,16 @@ public class Companies {
     @Column(name = "address", nullable = false, length = 100)
     private String address;
 
-    @Column(name = "nit", nullable = true, length = 100)
+    @Column(name = "nit", nullable = true, length = 100, unique = true)
     private String nit;
 
-    @Column(name = "email", nullable = false, length = 100)
+    @Column(name = "email", nullable = false, length = 100, unique = true)
     private String email;
 
     @Column(name = "phone", nullable = false, length = 20)
     private String phone;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "companyId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<CompanyTutor> tutors = new ArrayList<>();
 
     public Companies(Integer companyId, String name, String address, String nit, String email, String phone) {
@@ -40,6 +40,7 @@ public class Companies {
         this.email = email;
         this.phone = phone;
     }
+    public Companies() {}
     public Integer getCompanyId() {
         return companyId;
     }

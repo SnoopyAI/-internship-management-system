@@ -16,7 +16,7 @@ public abstract class User {
     @Column(name = "Email", unique = true, nullable = false, length = 80)
     private String email;
 
-    @Column(name = "Password", nullable = false, length = 24)
+    @Column(name = "Password", nullable = false, length = 150)
     private String password;
 
     //  constructores, getters, setters

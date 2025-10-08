@@ -12,6 +12,9 @@ public class InternDTO {
     private Integer companyTutorId;
     private Integer boardId;
 
+    public InternDTO() {
+    }
+
     public InternDTO(String name, String email, String password, Integer university, String career,
             int semester, Integer academyTutorId, Integer companyTutorId, Integer boardId) {
         this.name = name;

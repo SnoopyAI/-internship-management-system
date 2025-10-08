@@ -9,6 +9,8 @@ public class CompanyTutorDTO {
     private String position;
     private Integer companyId;
 
+    public CompanyTutorDTO() {}
+
     public CompanyTutorDTO(String name, String email, String password, String position, Integer companyId) {
         this.name = name;
         this.email = email;

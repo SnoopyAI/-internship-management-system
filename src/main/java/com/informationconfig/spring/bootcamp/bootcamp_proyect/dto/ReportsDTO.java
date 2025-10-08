@@ -25,6 +25,9 @@ public class ReportsDTO {
         this.companyTutorId = companyTutorId;
     }
 
+    public ReportsDTO() {
+    }
+
     public Integer getId() {
         return id;
     }

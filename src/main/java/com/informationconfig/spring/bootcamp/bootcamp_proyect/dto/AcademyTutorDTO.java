@@ -9,6 +9,8 @@ public class AcademyTutorDTO {
     private Integer universityId;
 
 
+    public AcademyTutorDTO() {}
+
     public AcademyTutorDTO(String name, String email, String password, String department, Integer universityId) {
         this.name = name;
         this.email = email;

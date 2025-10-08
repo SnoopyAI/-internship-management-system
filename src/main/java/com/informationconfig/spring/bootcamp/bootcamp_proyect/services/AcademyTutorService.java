@@ -1,11 +1,14 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.services;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.AcademyTutorDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.AcademyTutor;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.AcademyTutorRepository;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.UniversitiesRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,9 +18,16 @@ public class AcademyTutorService {
 
     private final AcademyTutorRepository academyTutorRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public AcademyTutorService(AcademyTutorRepository academyTutorRepository) {
         this.academyTutorRepository = academyTutorRepository;
     }
+
+    @Autowired
+
+    private UniversitiesRepository universitiesRepository;
 
     // Solo crear (no actualizar)
     public AcademyTutor addAcademyTutor(AcademyTutorDTO dto) {
@@ -30,8 +40,14 @@ public class AcademyTutorService {
         
         academyTutor.setName(dto.getName());
         academyTutor.setEmail(dto.getEmail());
-        academyTutor.setPassword(dto.getPassword());
+        academyTutor.setPassword(passwordEncoder.encode(dto.getPassword()));
         academyTutor.setDepartment(dto.getDepartment());
+
+        if (dto.getUniversityId() != null) {
+         universitiesRepository.findById(dto.getUniversityId())
+        .ifPresent(academyTutor::setUniversity);
+}
+
         return academyTutorRepository.save(academyTutor);
     }
 
@@ -59,7 +75,7 @@ public class AcademyTutorService {
                 academyTutor.setEmail(dto.getEmail());
             }
             if (dto.getPassword() != null) {
-                academyTutor.setPassword(dto.getPassword());
+                academyTutor.setPassword(passwordEncoder.encode(dto.getPassword()));
             }
             if (dto.getDepartment() != null) {
                 academyTutor.setDepartment(dto.getDepartment());

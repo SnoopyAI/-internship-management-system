@@ -25,9 +25,10 @@ public class SecurityConfig {
                     "/auth/**",
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
-                    "/academytutors/add"
+                    "/academytutors/add",
+                    "/companies/**"
                 ).permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             )
             .httpBasic(Customizer.withDefaults());
         return http.build();

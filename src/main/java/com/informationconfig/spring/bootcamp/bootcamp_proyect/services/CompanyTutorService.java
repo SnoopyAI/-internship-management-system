@@ -1,6 +1,7 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.CompanyTutorDTO;
@@ -13,8 +14,10 @@ import java.util.Optional;
 
 @Service
 public class CompanyTutorService {
-    
     private final CompanyTutorRepository companyTutorRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public CompanyTutorService(CompanyTutorRepository companyTutorRepository) {
         this.companyTutorRepository = companyTutorRepository;
@@ -34,11 +37,11 @@ public class CompanyTutorService {
         
         companyTutor.setName(dto.getName());
         companyTutor.setEmail(dto.getEmail());
-        companyTutor.setPassword(dto.getPassword());
+        companyTutor.setPassword(passwordEncoder.encode(dto.getPassword()));
         companyTutor.setPosition(dto.getPosition());
         
-        if (dto.getId() != null) {
-            companiesRepository.findById(dto.getId())
+        if (dto.getCompanyId() != null) {
+            companiesRepository.findById(dto.getCompanyId())
                 .ifPresent(companyTutor::setCompanyId);
         }
         
@@ -68,7 +71,7 @@ public class CompanyTutorService {
                 companyTutor.setEmail(dto.getEmail());
             }
             if (dto.getPassword() != null) {
-                companyTutor.setPassword(dto.getPassword());
+                companyTutor.setPassword(passwordEncoder.encode(dto.getPassword()));
             }
             if (dto.getPosition() != null) {
                 companyTutor.setPosition(dto.getPosition());

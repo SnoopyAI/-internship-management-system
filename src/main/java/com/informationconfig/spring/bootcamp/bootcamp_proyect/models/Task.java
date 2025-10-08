@@ -10,7 +10,7 @@ public class Task {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "task_id", length = 50, nullable = false)
+    @Column(name = "task_id", length = 50, nullable = false, unique = true)
     private Integer taskId;
 
     @Column(name = "Title", length = 100, nullable = false)

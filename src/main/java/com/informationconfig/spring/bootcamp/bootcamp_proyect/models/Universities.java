@@ -13,7 +13,7 @@ public class Universities {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, length = 50)
+    @Column(name = "id", nullable = false, length = 50, unique = true)
     private Integer universityId;
 
     @Column(name = "name", nullable = false, length = 80)
