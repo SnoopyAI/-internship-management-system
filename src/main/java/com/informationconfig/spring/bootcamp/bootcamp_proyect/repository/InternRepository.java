@@ -4,4 +4,6 @@ import org.springframework.stereotype.Repository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Intern;
 
 @Repository
-public interface InternRepository extends JpaRepository<Intern, Integer>{}
+public interface InternRepository extends JpaRepository<Intern, Integer>{
+	Intern findByEmail(String email);
+}

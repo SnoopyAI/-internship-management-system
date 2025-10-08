@@ -5,4 +5,6 @@ import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.AcademyTuto
 
 
 @Repository
-public interface AcademyTutorRepository extends JpaRepository<AcademyTutor, Integer>{}
+public interface AcademyTutorRepository extends JpaRepository<AcademyTutor, Integer>{
+	AcademyTutor findByEmail(String email);
+}

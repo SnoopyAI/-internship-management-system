@@ -5,4 +5,5 @@ import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.CompanyTuto
 
 @Repository
 public interface CompanyTutorRepository extends JpaRepository<CompanyTutor, Integer>{
+	CompanyTutor findByEmail(String email);
 }
