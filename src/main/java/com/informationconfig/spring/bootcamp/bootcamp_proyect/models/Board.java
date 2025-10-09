@@ -17,10 +17,10 @@ public class Board {
     @Column(name = "name", length = 50, nullable = false)
     private String name;
 
-    @Column(name = "description", length = 255)
+    @Column(name = "description", length = 1000)
     private String description;
 
-    @Column(name = "start_date", nullable = false)
+    @Column(name = "start_date", nullable = true)
     private LocalDate startDate;
 
     @Column(name = "end_date", nullable = true)
@@ -32,13 +32,13 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Intern> interns = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "academy_tutor_id", nullable = false, foreignKey = @ForeignKey(name = "FK_ACADEMY_TUTOR_BOARD"))
-    private AcademyTutor academyTutor;
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AcademyTutor> academyTutor = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "company_tutor_id", nullable = false, foreignKey = @ForeignKey(name = "FK_COMPANY_TUTOR_BOARD"))
+    @JoinColumn(name = "company_tutor_id", nullable = true, foreignKey = @ForeignKey(name = "FK_COMPANY_TUTOR_BOARD"))
     private CompanyTutor companyTutor;
+
 
     // Constructors
 
@@ -74,12 +74,7 @@ public class Board {
     public List<Intern> getInterns() { return interns; }
     public void setInterns(List<Intern> interns) { this.interns = interns; }
 
-    public AcademyTutor getAcademyTutor() { return academyTutor; }
-    public void setAcademyTutor(AcademyTutor academyTutor) { this.academyTutor = academyTutor; }
-
-    public CompanyTutor getCompanyTutor() { return companyTutor; }
-    public void setCompanyTutor(CompanyTutor companyTutor) { this.companyTutor = companyTutor; }
-
+  
      // Métodos específicos
 
     public void createList(Lists list) {
@@ -87,8 +82,24 @@ public class Board {
         this.lists.add(list);
     }
 
+    public List<AcademyTutor> getAcademyTutors() {
+        return academyTutor;
+    }
+
+    public void setAcademyTutors(List<AcademyTutor> academyTutors) {
+        this.academyTutor = academyTutors;
+    }
+
+    public CompanyTutor getCompanyTutor() {
+        return companyTutor;
+    }
+
+    public void setCompanyTutor(CompanyTutor companyTutor) {
+        this.companyTutor = companyTutor;
+    }
+
     public void deleteList(String listId) {
-        this.lists.removeIf(l -> l.getListId().equals(listId));
+        this.lists.removeIf(l -> l.getListId() == Integer.parseInt(listId));
     }
 
     public void addIntern(Intern intern) {
@@ -97,6 +108,14 @@ public class Board {
     }
 
     public void removeIntern(String internId) {
-        this.interns.removeIf(i -> i.getId().equals(internId));
+        this.interns.removeIf(i -> i.getId() == Integer.parseInt(internId));
+    }
+
+    public List<AcademyTutor> getAcademyTutor() {
+        return academyTutor;
+    }
+
+    public void setAcademyTutor(List<AcademyTutor> academyTutor) {
+        this.academyTutor = academyTutor;
     }
 }

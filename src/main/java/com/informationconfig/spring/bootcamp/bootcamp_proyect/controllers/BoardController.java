@@ -35,7 +35,6 @@ public class BoardController {
             board.getDescription(),
             board.getStartDate(),
             board.getEndDate(),
-            board.getAcademyTutor() != null ? board.getAcademyTutor().getId() : null,
             board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null);
     }
 
@@ -55,7 +54,6 @@ public class BoardController {
             board.getDescription(),
             board.getStartDate(),
             board.getEndDate(),
-            board.getAcademyTutor() != null ? board.getAcademyTutor().getId() : null,
             board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null
         )).toList();
 }
@@ -69,7 +67,6 @@ public class BoardController {
                 board.getDescription(),
                 board.getStartDate(),
                 board.getEndDate(),
-                board.getAcademyTutor() != null ? board.getAcademyTutor().getId() : null,
                 board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null
 
             ));
@@ -89,7 +86,6 @@ public class BoardController {
             board.getDescription(),
             board.getStartDate(),
             board.getEndDate(),
-            board.getAcademyTutor() != null ? board.getAcademyTutor().getId() : null,
             board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null);
     }
 

@@ -8,28 +8,27 @@ public class BoardDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private Integer academyTutorId;
-    private Integer companyTutorId;
+    
 
     public BoardDTO(String name, String description, LocalDate startDate, LocalDate endDate,
-            Integer academyTutorId, Integer companyTutorId) {
+            Integer academyTutorId) {
         this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
         this.academyTutorId = academyTutorId;
-        this.companyTutorId = companyTutorId;
+        
       
     }
     
     public BoardDTO(Integer id, String name, String description, LocalDate startDate, LocalDate endDate,
-            Integer academyTutorId, Integer companyTutorId) {
+            Integer academyTutorId) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
         this.academyTutorId = academyTutorId;
-        this.companyTutorId = companyTutorId;
     }
 
     public BoardDTO() {
@@ -83,13 +82,4 @@ public class BoardDTO {
         this.academyTutorId = academyTutorId;
     }
 
-    public Integer getCompanyTutorId() {
-        return companyTutorId;
-    }
-
-    public void setCompanyTutorId(Integer companyTutorId) {
-        this.companyTutorId = companyTutorId;
-    }
-
-    
 }

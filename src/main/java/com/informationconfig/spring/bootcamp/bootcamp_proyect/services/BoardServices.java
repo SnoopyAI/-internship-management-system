@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.BoardDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Board;
-import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.AcademyTutorRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.BoardRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.CompanyTutorRepository;
 
@@ -21,11 +20,9 @@ public class BoardServices {
         this.boardRepository = boardRepository;
     }
     
-    @Autowired
-    private CompanyTutorRepository companyTutorRepository;
 
     @Autowired
-    private AcademyTutorRepository academyTutorRepository;
+    private CompanyTutorRepository companyTutorRepository;
 
     // Solo crear (no actualizar)
     public Board addBoard(BoardDTO dto) {
@@ -41,16 +38,12 @@ public class BoardServices {
         board.setStartDate(dto.getStartDate());
         board.setEndDate(dto.getEndDate());
 
-    if (dto.getAcademyTutorId() != null) {
-        academyTutorRepository.findById(dto.getAcademyTutorId())
-            .ifPresent(board::setAcademyTutor);
-    }
-
-    // Asociar companyTutor si existe
-    if (dto.getCompanyTutorId() != null) {
-        companyTutorRepository.findById(dto.getCompanyTutorId())
+    if (dto.getId() != null) {
+        companyTutorRepository.findById(dto.getId())
             .ifPresent(board::setCompanyTutor);
     }
+
+
 
 
         return boardRepository.save(board);

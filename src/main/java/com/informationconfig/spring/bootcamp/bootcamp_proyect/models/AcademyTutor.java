@@ -23,8 +23,9 @@ public class AcademyTutor extends User {
         @OneToMany(mappedBy = "createdByTutorId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
         private List<Task> createdTasks = new ArrayList<>();
 
-        @OneToMany(mappedBy = "academyTutor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-        private List<Board> boards = new ArrayList<>();
+        @ManyToOne
+        @JoinColumn(name = "board_id", nullable = true, foreignKey = @ForeignKey(name = "FK_BOARD_ACADEMY_TUTOR"))
+        private Board board;
 
         @ManyToOne
         @JoinColumn(name = "university_id", nullable = false, foreignKey = @ForeignKey(name = "FK_UNIVERSITY_ACADEMY_TUTOR"))
@@ -72,11 +73,11 @@ public class AcademyTutor extends User {
         public void setInterns(List<Intern> interns) {
             this.interns = interns;
         }
-        public List<Board> getBoards() {
-            return boards;
+        public Board getBoard() {
+            return board;
         }
-        public void setBoards(List<Board> boards) {
-            this.boards = boards;
+        public void setBoard(Board board) {
+            this.board = board;
         }
 
         public Universities getUniversity() {
