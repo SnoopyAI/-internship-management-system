@@ -31,7 +31,7 @@ public class ListsController {
     public ListDTO add(@Valid @RequestBody ListDTO dto) {
         Lists lists = listsService.addList(dto);
         return new ListDTO(
-            lists.getListId(),
+
             lists.getName(),
             lists.getBoard() != null ? lists.getBoard().getBoardId() : null
         );
@@ -46,6 +46,7 @@ public class ListsController {
     public List<ListDTO> getAllListss() {
         List<Lists> lists = this.listsService.getAllList();
         return lists.stream().map(list -> new ListDTO(
+
             list.getListId(),
             list.getName(),
             list.getBoard() != null ? list.getBoard().getBoardId() : null
@@ -53,17 +54,17 @@ public class ListsController {
     }
 
     @GetMapping("/{id}")
-    public Optional<ListDTO> getListsById(@PathVariable String id) {
+    public Optional<ListDTO> getListsById(@PathVariable Integer id) {
         return this.listsService.getListById(id)
             .map(list -> new ListDTO(
-                list.getListId(),
+                
                 list.getName(),
                 list.getBoard() != null ? list.getBoard().getBoardId() : null
             ));
     }
 
     @PatchMapping("/{id}")
-    public ListDTO updateLists(@PathVariable String id, @Valid @RequestBody ListDTO dto) {
+    public ListDTO updateLists(@PathVariable Integer id, @Valid @RequestBody ListDTO dto) {
         Lists existing = this.listsService.getListById(id).orElse(null);
         if (existing == null) {
             return null;
@@ -71,6 +72,7 @@ public class ListsController {
         
         Lists updated = this.listsService.updateList(id, dto);
         return new ListDTO(
+            
             updated.getListId(),
             updated.getName(),
             updated.getBoard() != null ? updated.getBoard().getBoardId() : null
@@ -78,7 +80,7 @@ public class ListsController {
     }
     
     @DeleteMapping("/{id}")
-    public boolean deleteLists(@PathVariable String id) {
+    public boolean deleteLists(@PathVariable Integer id) {
         return this.listsService.deleteList(id);
     }
 }

@@ -30,12 +30,12 @@ public class AcademyTutorController {
     public AcademyTutorDTO add(@Valid @RequestBody AcademyTutorDTO dto) {
     AcademyTutor academyTutor = academyTutorService.addAcademyTutor(dto);
         return new AcademyTutorDTO(
-            academyTutor.getId(),
+
             academyTutor.getName(),
             academyTutor.getEmail(),
             academyTutor.getPassword(),
-            academyTutor.getAcademy(),
-            academyTutor.getDepartment()
+            academyTutor.getDepartment(),
+            academyTutor.getUniversity() != null ? academyTutor.getUniversity().getUniversityId() : null 
         );
     }
 
@@ -48,31 +48,32 @@ public class AcademyTutorController {
     public List<AcademyTutorDTO> getAllAcademyTutors() {
         List<AcademyTutor> tutors = academyTutorService.getAllAcademyTutors();
         return tutors.stream().map(t -> new AcademyTutorDTO(
+
                     t.getId(),
                     t.getName(),
                     t.getEmail(),
-                    t.getPassword(),
-                    t.getAcademy(),
-                    t.getDepartment()
+                    t.getDepartment(),
+                    t.getUniversity() != null ? t.getUniversity().getUniversityId() : null
             )).toList();
     }
 
 
       @GetMapping("/{id}")
-    public Optional<AcademyTutorDTO>tAcademyTutorById(@PathVariable String id) {
+    public Optional<AcademyTutorDTO>tAcademyTutorById(@PathVariable Integer id) {
         return academyTutorService.getAcademyTutorById(id)
             .map(t -> new AcademyTutorDTO(
+
                     t.getId(),
                     t.getName(),
                     t.getEmail(),
-                    t.getPassword(),
-                    t.getAcademy(),
-                    t.getDepartment()
+                    t.getDepartment(),
+                    t.getUniversity() != null ? t.getUniversity().getUniversityId() : null
+                    
             ));
     }
 
     @PatchMapping("/{id}")
-    public AcademyTutorDTO updateAcademyTutor(@PathVariable String id, @Valid @RequestBody AcademyTutorDTO dto) {
+    public AcademyTutorDTO updateAcademyTutor(@PathVariable Integer id, @Valid @RequestBody AcademyTutorDTO dto) {
         AcademyTutor existing = this.academyTutorService.getAcademyTutorById(id).orElse(null);
         if (existing == null) {
             return null;
@@ -80,17 +81,18 @@ public class AcademyTutorController {
         
         AcademyTutor updated = this.academyTutorService.updateAcademyTutor(id, dto);
         return new AcademyTutorDTO(
-            updated.getId(),
+            
             updated.getName(),
             updated.getEmail(),
             updated.getPassword(),
-            updated.getAcademy(),
-            updated.getDepartment()
+            updated.getDepartment(),
+            updated.getUniversity() != null ? updated.getUniversity().getUniversityId() : null
+            
         );
     }
     
     @DeleteMapping("/{id}")
-    public boolean deleteAcademyTutor(@PathVariable String id) {
+    public boolean deleteAcademyTutor(@PathVariable Integer id) {
         return this.academyTutorService.deleteAcademyTutor(id);
     }
 }

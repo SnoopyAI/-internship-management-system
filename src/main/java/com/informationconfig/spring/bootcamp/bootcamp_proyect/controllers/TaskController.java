@@ -31,7 +31,7 @@ public class TaskController {
     public TaskRequestDTO add(@RequestBody TaskRequestDTO dto) {
     Task newTask = taskService.addTask(dto, dto.getCreatedByTutorId());
     // Evitar recursividad: solo devolver IDs de internos
-    List<String> internIds = newTask.getInterns() != null ? newTask.getInterns().stream().map(i -> i.getId()).toList()
+    List<Integer> internIds = newTask.getInterns() != null ? newTask.getInterns().stream().map(i -> i.getId()).toList()
             : List.of();
         return new TaskRequestDTO(
             newTask.getTaskId(),
@@ -71,7 +71,7 @@ public List<TaskRequestDTO> getAllTasks() {
 }
 
 @GetMapping("/{id}")
-public Optional<TaskRequestDTO> getTaskById(@PathVariable String id) {
+public Optional<TaskRequestDTO> getTaskById(@PathVariable Integer id) {
     return this.taskService.getTaskById(id).map(t -> new TaskRequestDTO(
         t.getTaskId(),
         t.getTitle(),
@@ -89,7 +89,7 @@ public Optional<TaskRequestDTO> getTaskById(@PathVariable String id) {
 
 
     @PatchMapping("/{id}")
-    public TaskRequestDTO updateTask(@PathVariable String id, @Valid @RequestBody TaskRequestDTO dto) {
+    public TaskRequestDTO updateTask(@PathVariable Integer id, @Valid @RequestBody TaskRequestDTO dto) {
         // Solo actualizar si existe
         Task existing = this.taskService.getTaskById(id).orElse(null);
         if (existing == null) {
@@ -113,7 +113,7 @@ public Optional<TaskRequestDTO> getTaskById(@PathVariable String id) {
     }
     
     @DeleteMapping("/{id}")
-    public boolean deleteTask(@PathVariable String id) {
+    public boolean deleteTask(@PathVariable Integer id) {
         return this.taskService.deleteTask(id);
     }
 }

@@ -9,8 +9,6 @@ import java.util.List;
 public class Intern extends User {
 
     
-    @Column(name = "university", length = 50, nullable = false)
-    private String university; // Nombre simplificado
 
     @Column(name = "career", length = 100, nullable = false)
     private String career;
@@ -26,31 +24,26 @@ public class Intern extends User {
     private Board board;
 
     @ManyToOne
-    @JoinColumn(name = "academy_tutor_id")
+    @JoinColumn(name = "academy_tutor_id", nullable = false, foreignKey = @ForeignKey(name = "FK_BOARD_INTERN"))
     private AcademyTutor academyTutor;
 
     @ManyToOne
-    @JoinColumn(name = "company_tutor_id") // nombre de la FK en la tabla de interns
+    @JoinColumn(name = "company_tutor_id", nullable = false, foreignKey = @ForeignKey(name = "FK_COMPANY_TUTOR_INTERN"))
     private CompanyTutor companyTutor;
 
+    @ManyToOne
+    @JoinColumn(name = "university_id", nullable = false, foreignKey = @ForeignKey(name = "FK_UNIVERSITY_INTERN"))
+    private Universities university;
 
     // Constructores
     public Intern() {}
 
-    public Intern(String id, String name, String email, String password, String university, String career, Integer semester) {
+    public Intern(Integer id, String name, String email, String password, String career, Integer semester) {
         super(id, name, email, password);
-        this.university = university;
         this.career = career;
         this.semester = semester;
     }
 
-    public String getUniversity() {
-        return university;
-    }
-
-    public void setUniversity(String university) {
-        this.university = university;
-    }
 
     // Getters y Setters
     
@@ -100,6 +93,14 @@ public class Intern extends User {
 
     public void setCompanyTutor(CompanyTutor companyTutor) {
         this.companyTutor = companyTutor;
+    }
+
+    public Universities getUniversity() {
+        return university;
+    }
+
+    public void setUniversity(Universities university) {
+        this.university = university;
     }
 
 

@@ -13,9 +13,6 @@ public class CompanyTutor extends User {
     @Column(name = "position", length = 100, nullable = true)
     private String position;
 
-    @Column(name = "company", length = 100, nullable = false)
-    private String company;
-
     @OneToMany(mappedBy = "companyTutor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Intern> intern = new ArrayList<>();
 
@@ -28,14 +25,18 @@ public class CompanyTutor extends User {
     @OneToMany(mappedBy = "createdByTutorId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Task> createdTasks = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "company_id", nullable = false, foreignKey = @ForeignKey(name = "FK_COMPANY_COMPANY_TUTOR"))
+    private Companies companyId;
+
     // Constructors
 
     public CompanyTutor() {}
 
-    public CompanyTutor(String id, String name, String email, String password, String position, String company){
+    public CompanyTutor(Integer id, String name, String email, String password, String position){
         super(id, name, email, password);
         this.position = position;
-        this.company = company;
+        
     }
 
     // Getters and setters
@@ -46,12 +47,7 @@ public class CompanyTutor extends User {
     public void setPosition(String company) {
         this.position = company;
     }
-    public String getCompany() {
-        return company;
-    }
-    public void setCompany(String company) {
-        this.company = company;
-    }
+   
     public List<PerformanceReport> getReports() {
         return reports;
     }
@@ -77,7 +73,15 @@ public class CompanyTutor extends User {
         this.createdTasks = createdTasks;
     }
 
-    // Métodos específicos de CompanyTutor
+     public Companies getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Companies companyId) {
+        this.companyId = companyId;
+    }
+
+     // Métodos específicos de CompanyTutor
 
     public void assignTask(Task task) {
         // Logic to assign a task to an intern
@@ -91,5 +95,7 @@ public class CompanyTutor extends User {
     public void approveTask(String taskId) {
         // Logic to approve a task
     }
+
+   
     
 }

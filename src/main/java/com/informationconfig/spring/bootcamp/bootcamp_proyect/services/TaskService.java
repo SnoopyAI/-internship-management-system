@@ -38,7 +38,7 @@ public class TaskService {
     private InternRepository internRepository;
 
     // Crear tarea
-public Task addTask(TaskRequestDTO dto, String tutorId) {
+public Task addTask(TaskRequestDTO dto, Integer tutorId) {
     boolean isAcademyTutor = academyTutorRepository.existsById(tutorId);
     boolean isCompanyTutor = companyTutorRepository.existsById(tutorId);
 
@@ -52,7 +52,7 @@ public Task addTask(TaskRequestDTO dto, String tutorId) {
     }
 
     // Validar internos - AGREGANDO LOGS PARA DEBUG
-    List<String> internIds = dto.getInternsId();
+    List<Integer> internIds = dto.getInternsId();
     System.out.println("DEBUG: Lista de internIds recibida: " + internIds);
     List<Intern> interns = new ArrayList<>();
     if (internIds != null && !internIds.isEmpty()) {
@@ -67,7 +67,7 @@ public Task addTask(TaskRequestDTO dto, String tutorId) {
     }
 
     Task newTask = new Task();
-    newTask.setTaskId(dto.getId());
+    
     newTask.setTitle(dto.getTitle());
     newTask.setDescription(dto.getDescription());
     newTask.setDueDate(dto.getDueDate());
@@ -93,12 +93,12 @@ public Task addTask(TaskRequestDTO dto, String tutorId) {
     }
 
     // Obtener una tarea por ID
-    public Optional<Task> getTaskById(String id) {
+    public Optional<Task> getTaskById(Integer id) {
         return taskRepository.findById(id);
     }
 
     // Actualizar una tarea
-    public Task updateTask(String id, TaskRequestDTO dto) {
+    public Task updateTask(Integer id, TaskRequestDTO dto) {
         if (taskRepository.existsById(id)) {
             Task task = taskRepository.findById(id).get();
             
@@ -126,7 +126,7 @@ public Task addTask(TaskRequestDTO dto, String tutorId) {
     }
 
     // Eliminar una tarea
-    public boolean deleteTask(String id) {
+    public boolean deleteTask(Integer id) {
         if (taskRepository.existsById(id)) {
             taskRepository.deleteById(id);
             return true;

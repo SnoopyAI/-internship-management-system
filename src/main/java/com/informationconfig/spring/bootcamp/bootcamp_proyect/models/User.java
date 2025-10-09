@@ -6,8 +6,9 @@ import jakarta.persistence.*;
 public abstract class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", unique = true, nullable = false, length = 50)
-    private String id;
+    private Integer id;
 
     @Column(name = "Name", nullable = false, length = 50)
     private String name;
@@ -15,12 +16,12 @@ public abstract class User {
     @Column(name = "Email", unique = true, nullable = false, length = 80)
     private String email;
 
-    @Column(name = "Password", nullable = false, length = 20)
+    @Column(name = "Password", nullable = false, length = 150)
     private String password;
 
     //  constructores, getters, setters
 
-    public User(String id, String name, String email, String password) {
+    public User(Integer id, String name, String email, String password) {
         this.id = id;
         this.name =  name;
         this.email = email;
@@ -29,11 +30,11 @@ public abstract class User {
 
     public User() {}
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

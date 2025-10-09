@@ -1,25 +1,26 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.services;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.InternDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Intern;
-import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.CompanyTutorRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.AcademyTutorRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.BoardRepository;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.CompanyTutorRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.InternRepository;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.UniversitiesRepository;
+
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class InternService {
-    
     private final InternRepository internRepository;
 
-    public InternService(InternRepository internRepository) {
-        this.internRepository = internRepository;
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private CompanyTutorRepository companyTutorRepository;
@@ -30,6 +31,13 @@ public class InternService {
     @Autowired
     private BoardRepository boardRepository;
 
+    @Autowired
+    private UniversitiesRepository universitiesRepository;
+
+    public InternService(InternRepository internRepository) {
+        this.internRepository = internRepository;
+    }
+
     public Intern addIntern(InternDTO dto) {
         // Validar que el interno no exista
         if (dto.getId() != null && internRepository.existsById(dto.getId())) {
@@ -37,11 +45,9 @@ public class InternService {
         }
         
         Intern intern = new Intern();
-        intern.setId(dto.getId());
         intern.setName(dto.getName());
         intern.setEmail(dto.getEmail());
-        intern.setPassword(dto.getPassword());
-        intern.setUniversity(dto.getUniversity());
+        intern.setPassword(passwordEncoder.encode(dto.getPassword()));
         intern.setCareer(dto.getCareer());
         intern.setSemester(dto.getSemester());
         
@@ -63,10 +69,13 @@ public class InternService {
             .ifPresent(intern::setBoard);
     }
 
+    if (dto.getId() != null) {
+        universitiesRepository.findById(dto.getId())
+            .ifPresent(intern::setUniversity);
+    }
+
     return internRepository.save(intern);
 }
-
-    
 
     // Botener todos los Internos
     public List<Intern> getAllInterns() {
@@ -74,12 +83,12 @@ public class InternService {
     }
 
     // Obtener Interno por ID
-    public Optional<Intern> getInternById(String id) {
+    public Optional<Intern> getInternById(Integer id) {
         return internRepository.findById(id);
     }
 
     // Actualizar Interno
-     public Intern updateIntern(String id, InternDTO dto) {
+     public Intern updateIntern(Integer id, InternDTO dto) {
         if (internRepository.existsById(id)) {
             Intern intern = internRepository.findById(id).get();
             
@@ -91,11 +100,9 @@ public class InternService {
                 intern.setEmail(dto.getEmail());
             }
             if (dto.getPassword() != null) {
-                intern.setPassword(dto.getPassword());
+                intern.setPassword(passwordEncoder.encode(dto.getPassword()));
             }
-            if (dto.getUniversity() != null) {
-                intern.setUniversity(dto.getUniversity());
-            }
+           
             if (dto.getCareer() != null) {
                 intern.setCareer(dto.getCareer());
             }
@@ -110,7 +117,7 @@ public class InternService {
     }
 
     // Eliminar un Interno
-    public boolean deleteIntern(String id) {
+    public boolean deleteIntern(Integer id) {
         if (internRepository.existsById(id)) {
             internRepository.deleteById(id);
             return true;

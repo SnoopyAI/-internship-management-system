@@ -30,12 +30,11 @@ public class BoardController {
     public BoardDTO add(@RequestBody BoardDTO dto) {
     Board board = boardService.addBoard(dto);
         return new BoardDTO(
-            board.getBoardId(),
+            
             board.getName(),
             board.getDescription(),
             board.getStartDate(),
             board.getEndDate(),
-            board.getAcademyTutor() != null ? board.getAcademyTutor().getId() : null,
             board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null);
     }
 
@@ -49,18 +48,18 @@ public class BoardController {
     public List<BoardDTO> getAllBoards() {
     List<Board> boards = boardService.getAllBoards();
         return boards.stream().map(board -> new BoardDTO(
+
             board.getBoardId(),
             board.getName(),
             board.getDescription(),
             board.getStartDate(),
             board.getEndDate(),
-            board.getAcademyTutor() != null ? board.getAcademyTutor().getId() : null,
             board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null
         )).toList();
 }
 
     @GetMapping("/{id}")
-    public Optional<BoardDTO> getBoardById(@PathVariable String id) {
+    public Optional<BoardDTO> getBoardById(@PathVariable Integer id) {
         return boardService.getBoardById(id)
             .map(board -> new BoardDTO(
                 board.getBoardId(),
@@ -68,14 +67,13 @@ public class BoardController {
                 board.getDescription(),
                 board.getStartDate(),
                 board.getEndDate(),
-                board.getAcademyTutor() != null ? board.getAcademyTutor().getId() : null,
                 board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null
 
             ));
     }
 
     @PatchMapping("/{id}")
-    public BoardDTO updateBoard(@PathVariable String id, @Valid @RequestBody BoardDTO dto) {
+    public BoardDTO updateBoard(@PathVariable Integer id, @Valid @RequestBody BoardDTO dto) {
         Board existing = this.boardService.getBoardById(id).orElse(null);
         if (existing == null) {
             return null;
@@ -88,12 +86,11 @@ public class BoardController {
             board.getDescription(),
             board.getStartDate(),
             board.getEndDate(),
-            board.getAcademyTutor() != null ? board.getAcademyTutor().getId() : null,
             board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null);
     }
 
     @DeleteMapping("/{id}")
-    public boolean deleteBoard(@PathVariable String id) {
+    public boolean deleteBoard(@PathVariable Integer id) {
         return this.boardService.deleteBoard(id);
     }
 }

@@ -1,20 +1,22 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.dto;
 
 public class InternDTO {
-    private String id;
+    private Integer id;
     private String name;
     private String email;
     private String password;
-    private String university;
+    private Integer university;
     private String career;
     private int semester;
-    private String academyTutorId;
-    private String companyTutorId;
-    private String boardId;
-    
-    public InternDTO(String id, String name, String email, String password, String university, String career,
-            int semester, String academyTutorId, String companyTutorId, String boardId) {
-        this.id = id;
+    private Integer academyTutorId;
+    private Integer companyTutorId;
+    private Integer boardId;
+
+    public InternDTO() {
+    }
+
+    public InternDTO(String name, String email, String password, Integer university, String career,
+            int semester, Integer academyTutorId, Integer companyTutorId, Integer boardId) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -26,11 +28,24 @@ public class InternDTO {
         this.boardId = boardId;
     }
 
-    public String getId() {
+    public InternDTO(Integer id, String name, String email, Integer university, String career,
+            int semester, Integer academyTutorId, Integer companyTutorId, Integer boardId) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.university = university;
+        this.career = career;
+        this.semester = semester;
+        this.academyTutorId = academyTutorId;
+        this.companyTutorId = companyTutorId;
+        this.boardId = boardId;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -58,11 +73,11 @@ public class InternDTO {
         this.password = password;
     }
 
-    public String getUniversity() {
+    public Integer getUniversity() {
         return university;
     }
 
-    public void setUniversity(String university) {
+    public void setUniversity(Integer university) {
         this.university = university;
     }
 
@@ -82,27 +97,27 @@ public class InternDTO {
         this.semester = semester;
     }
 
-    public String getAcademyTutorId() {
+    public Integer getAcademyTutorId() {
         return academyTutorId;
     }
 
-    public void setAcademyTutorId(String academyTutorId) {
+    public void setAcademyTutorId(Integer academyTutorId) {
         this.academyTutorId = academyTutorId;
     }
 
-    public String getCompanyTutorId() {
+    public Integer getCompanyTutorId() {
         return companyTutorId;
     }
 
-    public void setCompanyTutorId(String companyTutorId) {
+    public void setCompanyTutorId(Integer companyTutorId) {
         this.companyTutorId = companyTutorId;
     }
 
-    public String getBoardId() {
+    public Integer getBoardId() {
         return boardId;
     }
 
-    public void setBoardId(String boardId) {
+    public void setBoardId(Integer boardId) {
         this.boardId = boardId;
     }
 

@@ -4,4 +4,4 @@ import org.springframework.stereotype.Repository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Board;
 
 @Repository
-public interface BoardRepository extends JpaRepository<Board, String>{}
+public interface BoardRepository extends JpaRepository<Board, Integer>{}

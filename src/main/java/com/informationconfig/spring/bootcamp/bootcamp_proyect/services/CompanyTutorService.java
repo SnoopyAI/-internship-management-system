@@ -1,22 +1,30 @@
 package com.informationconfig.spring.bootcamp.bootcamp_proyect.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.CompanyTutorDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.CompanyTutor;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.CompanyTutorRepository;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.CompaniesRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CompanyTutorService {
-    
     private final CompanyTutorRepository companyTutorRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public CompanyTutorService(CompanyTutorRepository companyTutorRepository) {
         this.companyTutorRepository = companyTutorRepository;
     }
+
+    @Autowired
+    private CompaniesRepository companiesRepository;
 
     // Solo crear (no actualizar)
     public CompanyTutor addCompanyTutor(CompanyTutorDTO dto) {
@@ -26,12 +34,16 @@ public class CompanyTutorService {
         }
         
         CompanyTutor companyTutor = new CompanyTutor();
-        companyTutor.setId(dto.getId());
+        
         companyTutor.setName(dto.getName());
         companyTutor.setEmail(dto.getEmail());
-        companyTutor.setPassword(dto.getPassword());
+        companyTutor.setPassword(passwordEncoder.encode(dto.getPassword()));
         companyTutor.setPosition(dto.getPosition());
-        companyTutor.setCompany(dto.getCompany());
+        
+        if (dto.getCompanyId() != null) {
+            companiesRepository.findById(dto.getCompanyId())
+                .ifPresent(companyTutor::setCompanyId);
+        }
         
         return companyTutorRepository.save(companyTutor);
     }
@@ -42,12 +54,12 @@ public class CompanyTutorService {
     }
 
     // Obtener un CompanyTutor por ID
-    public Optional<CompanyTutor> getCompanyTutorById(String id) {
+    public Optional<CompanyTutor> getCompanyTutorById(Integer id) {
         return companyTutorRepository.findById(id);
     }
 
     // Actualizar un CompanyTutor
-    public CompanyTutor updateCompanyTutor(String id, CompanyTutorDTO dto) {
+    public CompanyTutor updateCompanyTutor(Integer id, CompanyTutorDTO dto) {
         if (companyTutorRepository.existsById(id)) {
             CompanyTutor companyTutor = companyTutorRepository.findById(id).get();
             
@@ -59,14 +71,12 @@ public class CompanyTutorService {
                 companyTutor.setEmail(dto.getEmail());
             }
             if (dto.getPassword() != null) {
-                companyTutor.setPassword(dto.getPassword());
+                companyTutor.setPassword(passwordEncoder.encode(dto.getPassword()));
             }
             if (dto.getPosition() != null) {
                 companyTutor.setPosition(dto.getPosition());
             }
-            if (dto.getCompany() != null) {
-                companyTutor.setCompany(dto.getCompany());
-            }
+           
             
             return companyTutorRepository.save(companyTutor);
         }
@@ -74,7 +84,7 @@ public class CompanyTutorService {
     }
 
     // Eliminar un CompanyTutor
-    public boolean deleteCompanyTutor(String id) {
+    public boolean deleteCompanyTutor(Integer id) {
         if (companyTutorRepository.existsById(id)) {
             companyTutorRepository.deleteById(id);
             return true;

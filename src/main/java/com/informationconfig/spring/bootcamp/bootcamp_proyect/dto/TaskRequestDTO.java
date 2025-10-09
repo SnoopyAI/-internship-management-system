@@ -4,29 +4,49 @@ import java.util.List;
 
 public class TaskRequestDTO {
 
-    private String id;
+    private Integer id;
     private String title;
     private String description;
     private String status;
     private String dueDate;
-    private List<String> internsId;
-    private String assignTo;
-    private String createdByTutorId;
-    private String listId;
+    private List<Integer> internsId;
+    private Integer assignTo;
+    private Integer createdByTutorId;
+    private Integer listId;
 
     public TaskRequestDTO() {}
 
     public TaskRequestDTO(
-        String id,
         String title, 
         String description, 
         String status, 
         String dueDate,
-        String assignTo, 
-        String createdByTutorId, 
-        String listId,
-        List<String> internsId) {
-        
+        Integer assignTo, 
+        Integer createdByTutorId, 
+        Integer listId,
+        List<Integer> internsId) {
+
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.dueDate = dueDate;
+        this.assignTo = assignTo;
+        this.createdByTutorId = createdByTutorId;
+        this.listId = listId;
+        this.internsId = internsId;
+    }
+
+    public TaskRequestDTO(
+        Integer id,
+        String title, 
+        String description, 
+        String status, 
+        String dueDate,
+        Integer assignTo, 
+        Integer createdByTutorId, 
+        Integer listId,
+        List<Integer> internsId) {
+
         this.id = id;
         this.title = title;
         this.description = description;
@@ -38,11 +58,11 @@ public class TaskRequestDTO {
         this.internsId = internsId;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -78,35 +98,35 @@ public class TaskRequestDTO {
         this.dueDate = dueDate;
     }
 
-    public List<String> getInternsId() {
+    public List<Integer> getInternsId() {
         return internsId;
     }
 
-    public void setInternsId(List<String> internsId) {
+    public void setInternsId(List<Integer> internsId) {
         this.internsId = internsId;
     }
 
-    public String getAssignTo() {
+    public Integer getAssignTo() {
         return assignTo;
     }
 
-    public void setAssignTo(String assignTo) {
+    public void setAssignTo(Integer assignTo) {
         this.assignTo = assignTo;
     }
 
-    public String getCreatedByTutorId() {
+    public Integer getCreatedByTutorId() {
         return createdByTutorId;
     }
 
-    public void setCreatedByTutorId(String createdByTutorId) {
+    public void setCreatedByTutorId(Integer createdByTutorId) {
         this.createdByTutorId = createdByTutorId;
     }
 
-    public String getListId() {
+    public Integer getListId() {
         return listId;
     }
 
-    public void setListId(String listId) {
+    public void setListId(Integer listId) {
         this.listId = listId;
     }
 

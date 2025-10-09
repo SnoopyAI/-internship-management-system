@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.BoardDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Board;
-import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.AcademyTutorRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.BoardRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.CompanyTutorRepository;
 
@@ -21,11 +20,9 @@ public class BoardServices {
         this.boardRepository = boardRepository;
     }
     
-    @Autowired
-    private CompanyTutorRepository companyTutorRepository;
 
     @Autowired
-    private AcademyTutorRepository academyTutorRepository;
+    private CompanyTutorRepository companyTutorRepository;
 
     // Solo crear (no actualizar)
     public Board addBoard(BoardDTO dto) {
@@ -35,22 +32,18 @@ public class BoardServices {
         }
         
         Board board = new Board();
-        board.setBoardId(dto.getId());
+        
         board.setName(dto.getName());
         board.setDescription(dto.getDescription());
         board.setStartDate(dto.getStartDate());
         board.setEndDate(dto.getEndDate());
 
-    if (dto.getAcademyTutorId() != null) {
-        academyTutorRepository.findById(dto.getAcademyTutorId())
-            .ifPresent(board::setAcademyTutor);
-    }
-
-    // Asociar companyTutor si existe
-    if (dto.getCompanyTutorId() != null) {
-        companyTutorRepository.findById(dto.getCompanyTutorId())
+    if (dto.getId() != null) {
+        companyTutorRepository.findById(dto.getId())
             .ifPresent(board::setCompanyTutor);
     }
+
+
 
 
         return boardRepository.save(board);
@@ -62,12 +55,12 @@ public class BoardServices {
     }
 
     // Obtener un Board por ID
-    public Optional<Board> getBoardById(String id) {
+    public Optional<Board> getBoardById(Integer id) {
         return boardRepository.findById(id);
     }
 
     // Actualizar un Board
-    public Board updateBoard(String id, BoardDTO dto) {
+    public Board updateBoard(Integer id, BoardDTO dto) {
         if (boardRepository.existsById(id)) {
             Board board = boardRepository.findById(id).get();
             
@@ -92,7 +85,7 @@ public class BoardServices {
     }
 
     // Eliminar un Board por ID
-    public boolean deleteBoard(String id) {
+    public boolean deleteBoard(Integer id) {
         if (boardRepository.existsById(id)) {
             boardRepository.deleteById(id);
             return true;

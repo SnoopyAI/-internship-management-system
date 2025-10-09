@@ -9,8 +9,9 @@ import java.util.List;
 public class Lists {
 
     @Id
-    @Column(name = "list_id", length = 50, nullable = false)
-    private String listId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "list_id", length = 50, nullable = false, unique = true)
+    private Integer listId;
 
     @Column(name = "name", length = 50, nullable = false)
     private String name;
@@ -26,18 +27,18 @@ public class Lists {
 
     public Lists() {}
 
-    public Lists(String id, String name) {
+    public Lists(Integer id, String name) {
         listId = id;
         this.name = name;
     } 
 
     // Getters and Setters
 
-    public String getListId() {
+    public Integer getListId() {
         return listId;
     }
 
-    public void setListId(String listId) {
+    public void setListId(Integer listId) {
         this.listId = listId;
     }
 
