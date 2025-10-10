@@ -3,6 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import ProjectDetail from './components/ProjectDetail';
+import Universities from './components/Universities';
+import Participants from './components/Participants';
+import Tasks from './components/Tasks';
+import Reports from './components/Reports';
+import Settings from './components/Settings';
 import './App.css';
 
 function App() {
@@ -39,6 +44,56 @@ function App() {
             element={
               <PrivateRoute>
                 <ProjectDetail />
+              </PrivateRoute>
+            } 
+          />
+
+          {/* Ruta de universidades */}
+          <Route 
+            path="/universities" 
+            element={
+              <PrivateRoute>
+                <Universities />
+              </PrivateRoute>
+            } 
+          />
+
+          {/* Ruta de participantes */}
+          <Route 
+            path="/participants" 
+            element={
+              <PrivateRoute>
+                <Participants />
+              </PrivateRoute>
+            } 
+          />
+
+          {/* Ruta de tareas */}
+          <Route 
+            path="/tasks" 
+            element={
+              <PrivateRoute>
+                <Tasks />
+              </PrivateRoute>
+            } 
+          />
+
+          {/* Ruta de reportes */}
+          <Route 
+            path="/reports" 
+            element={
+              <PrivateRoute>
+                <Reports />
+              </PrivateRoute>
+            } 
+          />
+
+          {/* Ruta de configuración */}
+          <Route 
+            path="/settings" 
+            element={
+              <PrivateRoute>
+                <Settings />
               </PrivateRoute>
             } 
           />

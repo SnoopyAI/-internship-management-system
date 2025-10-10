@@ -11,6 +11,7 @@ function Dashboard() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -32,6 +33,11 @@ function Dashboard() {
     // Cargar proyectos reales del backend
     loadBoards();
     loadMockTasks();
+    
+    // Simular un pequeño delay para mostrar el loading
+    setTimeout(() => {
+      setPageLoading(false);
+    }, 800);
   }, []);
 
   const loadBoards = async () => {
@@ -161,6 +167,16 @@ function Dashboard() {
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
+  // Mostrar pantalla de carga
+  if (pageLoading) {
+    return (
+      <div className="loading-screen">
+        <div className="spinner"></div>
+        <p className="loading-text">Loading</p>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-container">
       {/* Header Navigation */}
@@ -171,12 +187,12 @@ function Dashboard() {
         </div>
         
         <nav className="top-nav">
-          <a href="#home" className="nav-item active">Inicio</a>
-          <a href="#boards" className="nav-item">Tableros</a>
-          <a href="#tasks" className="nav-item">Tareas</a>
-          <a href="#team" className="nav-item">Equipo</a>
-          <a href="#reports" className="nav-item">Reportes</a>
-          <a href="#settings" className="nav-item">Configuración</a>
+          <button onClick={() => navigate('/dashboard')} className="nav-item active">Inicio</button>
+          <button onClick={() => navigate('/participants')} className="nav-item">Equipo</button>
+          <button onClick={() => navigate('/tasks')} className="nav-item">Tareas</button>
+          <button onClick={() => navigate('/universities')} className="nav-item">Universidades</button>
+          <button onClick={() => navigate('/reports')} className="nav-item">Reportes</button>
+          <button onClick={() => navigate('/settings')} className="nav-item">Configuración</button>
         </nav>
 
         <div className="header-actions">
@@ -190,11 +206,6 @@ function Dashboard() {
 
       {/* Main Content */}
       <main className="main-content">
-        {/* Page Title */}
-        <div className="page-title">
-          <h1>Dashboard</h1>
-        </div>
-
         {/* Boards Section */}
         <section className="boards-section">
           <div className="section-header">
