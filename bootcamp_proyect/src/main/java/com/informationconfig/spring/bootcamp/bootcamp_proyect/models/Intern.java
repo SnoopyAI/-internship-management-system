@@ -19,7 +19,7 @@ public class Intern extends User {
     @ManyToMany(mappedBy = "interns")
     private List<Task> tasks = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "board_id", nullable = false, foreignKey = @ForeignKey(name = "FK_BOARD_INTERN"))
     private Board board;
 
@@ -34,6 +34,7 @@ public class Intern extends User {
     @ManyToOne
     @JoinColumn(name = "university_id", nullable = false, foreignKey = @ForeignKey(name = "FK_UNIVERSITY_INTERN"))
     private Universities university;
+
 
     // Constructores
     public Intern() {}
@@ -102,6 +103,5 @@ public class Intern extends User {
     public void setUniversity(Universities university) {
         this.university = university;
     }
-
 
 }
