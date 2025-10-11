@@ -131,6 +131,23 @@ public class BoardController {
             board.getEndDate(),
             board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null);
     }
+    
+    @PutMapping("/{id}")
+    public BoardDTO updateBoardPut(@PathVariable Integer id, @Valid @RequestBody BoardDTO dto) {
+        Board existing = this.boardService.getBoardById(id).orElse(null);
+        if (existing == null) {
+            return null;
+        }
+        
+        Board board = this.boardService.updateBoard(id, dto);
+        return new BoardDTO(
+            board.getBoardId(),
+            board.getName(),
+            board.getDescription(),
+            board.getStartDate(),
+            board.getEndDate(),
+            board.getCompanyTutor() != null ? board.getCompanyTutor().getId() : null);
+    }
 
     @DeleteMapping("/{id}")
     public boolean deleteBoard(@PathVariable Integer id) {

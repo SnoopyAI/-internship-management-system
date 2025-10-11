@@ -43,7 +43,7 @@ function Settings() {
         
         <nav className="top-nav">
           <button onClick={() => navigate('/dashboard')} className="nav-item">Inicio</button>
-          <button onClick={() => navigate('/participants')} className="nav-item">Equipo</button>
+          <button onClick={() => navigate('/participants')} className="nav-item">Participantes</button>
           <button onClick={() => navigate('/universities')} className="nav-item">Universidades</button>
           <button onClick={() => navigate('/settings')} className="nav-item active">Configuración</button>
         </nav>
@@ -60,7 +60,7 @@ function Settings() {
       <main className="settings-main">
         <div className="page-header">
           <div>
-            <h1>⚙️ Configuración</h1>
+            <h1>Configuración</h1>
             <p className="page-subtitle">Administra tu cuenta y preferencias</p>
           </div>
         </div>

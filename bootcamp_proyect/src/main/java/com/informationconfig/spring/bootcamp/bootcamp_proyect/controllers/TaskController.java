@@ -87,6 +87,27 @@ public Optional<TaskRequestDTO> getTaskById(@PathVariable Integer id) {
     ));
 }
 
+@GetMapping("/list/{listId}")
+public List<TaskRequestDTO> getTasksByList(@PathVariable Integer listId) {
+    List<Task> tasks = this.taskService.getAllTasks();
+    return tasks.stream()
+        .filter(t -> t.getList() != null && t.getList().getListId().equals(listId))
+        .map(t -> new TaskRequestDTO(
+            t.getTaskId(),
+            t.getTitle(),
+            t.getDescription(),
+            t.getDueDate(),
+            t.getStatus(),
+            t.getAssignTo(),
+            t.getCreatedByTutorId(),
+            t.getList().getListId(),
+            t.getInterns() != null
+                ? t.getInterns().stream().map(i -> i.getId()).toList()
+                : List.of()
+        ))
+        .toList();
+}
+
 
     @PatchMapping("/{id}")
     public TaskRequestDTO updateTask(@PathVariable Integer id, @Valid @RequestBody TaskRequestDTO dto) {

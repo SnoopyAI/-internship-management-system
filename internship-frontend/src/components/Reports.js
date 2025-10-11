@@ -49,7 +49,7 @@ function Reports() {
       <main className="reports-main">
         <div className="page-header">
           <div>
-            <h1>📊 Reportes y Estadísticas</h1>
+            <h1>Reportes y Estadísticas</h1>
             <p className="page-subtitle">Visualiza el progreso y rendimiento del sistema</p>
           </div>
           <div className="time-range-selector">
@@ -125,21 +125,21 @@ function Reports() {
         {/* Charts Section */}
         <div className="charts-section">
           <div className="chart-card">
-            <h2>📊 Rendimiento por Proyecto</h2>
+            <h2>Rendimiento por Proyecto</h2>
             <div className="chart-placeholder">
               <p>Gráfico de barras - Próximamente</p>
             </div>
           </div>
 
           <div className="chart-card">
-            <h2>📈 Progreso en el Tiempo</h2>
+            <h2>Progreso en el Tiempo</h2>
             <div className="chart-placeholder">
               <p>Gráfico de líneas - Próximamente</p>
             </div>
           </div>
 
           <div className="chart-card">
-            <h2>🎯 Distribución de Tareas</h2>
+            <h2>Distribución de Tareas</h2>
             <div className="chart-placeholder">
               <p>Gráfico circular - Próximamente</p>
             </div>

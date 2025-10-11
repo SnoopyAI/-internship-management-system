@@ -99,6 +99,17 @@ function Login() {
           <button type="submit" disabled={loading}>
             {loading ? 'Ingresando...' : 'Ingresar'}
           </button>
+
+          <div className="register-link">
+            ¿No tienes cuenta? 
+            <button 
+              type="button"
+              onClick={() => navigate('/register')}
+              className="link-button"
+            >
+              Regístrate aquí
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -57,10 +57,23 @@ public class ListsController {
     public Optional<ListDTO> getListsById(@PathVariable Integer id) {
         return this.listsService.getListById(id)
             .map(list -> new ListDTO(
-                
+                list.getListId(),
                 list.getName(),
                 list.getBoard() != null ? list.getBoard().getBoardId() : null
             ));
+    }
+    
+    @GetMapping("/board/{boardId}")
+    public List<ListDTO> getListsByBoard(@PathVariable Integer boardId) {
+        List<Lists> lists = this.listsService.getAllList();
+        return lists.stream()
+            .filter(list -> list.getBoard() != null && list.getBoard().getBoardId().equals(boardId))
+            .map(list -> new ListDTO(
+                list.getListId(),
+                list.getName(),
+                list.getBoard().getBoardId()
+            ))
+            .toList();
     }
 
     @PatchMapping("/{id}")

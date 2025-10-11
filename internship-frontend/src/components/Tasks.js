@@ -162,8 +162,8 @@ function Tasks() {
                   </span>
                 </div>
                 <div className="task-meta">
-                  <span className="task-project">📁 {task.project}</span>
-                  <span className="task-date">📅 {task.dueDate}</span>
+                  <span className="task-project">{task.project}</span>
+                  <span className="task-date">{task.dueDate}</span>
                 </div>
                 <div className="task-footer">
                   <span className={`status-badge status-${task.status}`}>

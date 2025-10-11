@@ -17,8 +17,7 @@ function ProjectDetail() {
   const [participantType, setParticipantType] = useState('academic'); // 'academic' o 'intern'
   const [openParticipantAfterUniversity, setOpenParticipantAfterUniversity] = useState(false);
   
-  // Nuevo: Estados para modo de añadir participantes
-  const [addMode, setAddMode] = useState('existing'); // 'existing' o 'create'
+  // Estados para búsqueda de participantes existentes
   const [searchQuery, setSearchQuery] = useState('');
   const [availableParticipants, setAvailableParticipants] = useState([]);
   const [selectedParticipantId, setSelectedParticipantId] = useState(null);
@@ -48,7 +47,14 @@ function ProjectDetail() {
   const [newListName, setNewListName] = useState('');
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [selectedListId, setSelectedListId] = useState(null);
-  const [newTaskName, setNewTaskName] = useState('');
+  const [taskForm, setTaskForm] = useState({
+    title: '',
+    description: '',
+    dueDate: '',
+    status: 'To Do'
+  });
+  const [showEditTaskModal, setShowEditTaskModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
   
   // Estados para editar board
   const [showEditBoardModal, setShowEditBoardModal] = useState(false);
@@ -61,13 +67,19 @@ function ProjectDetail() {
     loadProjectDetails();
     loadUniversities();
   }, [id]);
+  
+  useEffect(() => {
+    if (activeTab === 'tasks') {
+      loadLists();
+    }
+  }, [activeTab, id]);
 
   // Cargar participantes disponibles cuando se abre el modal
   useEffect(() => {
-    if (showAddParticipantModal && addMode === 'existing') {
+    if (showAddParticipantModal) {
       loadAvailableParticipants();
     }
-  }, [showAddParticipantModal, addMode, participantType]);
+  }, [showAddParticipantModal, participantType]);
 
   const loadAvailableParticipants = async () => {
     const credentials = localStorage.getItem('authCredentials');
@@ -197,228 +209,71 @@ function ProjectDetail() {
     navigate('/dashboard');
   };
 
-  const handleAddList = async () => {
-    if (!newListName.trim()) return;
-
-    const credentials = localStorage.getItem('authCredentials');
-    
-    try {
-      const response = await fetch(`http://localhost:8080/lists/add`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Basic ${credentials}`
-        },
-        body: JSON.stringify({
-          name: newListName,
-          boardId: id
-        })
-      });
-
-      if (response.ok) {
-        setNewListName('');
-        setShowAddListModal(false);
-        loadProjectDetails(); // Recargar para actualizar las listas
-      }
-    } catch (error) {
-      console.error('Error creating list:', error);
-    }
-  };
-
-  const handleAddTask = async () => {
-    if (!newTaskName.trim() || !selectedListId) return;
-
-    const credentials = localStorage.getItem('authCredentials');
-    
-    try {
-      const response = await fetch(`http://localhost:8080/tasks/add`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Basic ${credentials}`
-        },
-        body: JSON.stringify({
-          name: newTaskName,
-          listId: selectedListId
-        })
-      });
-
-      if (response.ok) {
-        setNewTaskName('');
-        setShowAddTaskModal(false);
-        setSelectedListId(null);
-        loadProjectDetails(); // Recargar para actualizar las tareas
-      }
-    } catch (error) {
-      console.error('Error creating task:', error);
-    }
-  };
-
   const handleAddParticipant = async () => {
     const credentials = localStorage.getItem('authCredentials');
     
-    // Si es modo "existing" (añadir existente)
-    if (addMode === 'existing') {
-      if (!selectedParticipantId) {
-        setParticipantError('Por favor selecciona un participante');
-        return;
-      }
-      
-      try {
-        let endpoint = '';
-        
-        if (participantType === 'academic') {
-          // Añadir tutor académico al board
-          endpoint = `http://localhost:8080/boards/${id}/academicTutor/${selectedParticipantId}`;
-        } else if (participantType === 'company') {
-          // Asignar tutor de empresa al board
-          endpoint = `http://localhost:8080/boards/${id}/companyTutor/${selectedParticipantId}`;
-        } else if (participantType === 'intern') {
-          // Asignar board al interno (actualizar su boardId)
-          endpoint = `http://localhost:8080/interns/update/${selectedParticipantId}`;
-        }
-
-        let response;
-        
-        if (participantType === 'intern') {
-          // Para interns, necesitamos hacer PUT con el objeto completo
-          const internResponse = await fetch(`http://localhost:8080/interns/Read/${selectedParticipantId}`, {
-            headers: { 'Authorization': `Basic ${credentials}` }
-          });
-          const internData = await internResponse.json();
-          
-          response = await fetch(endpoint, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Basic ${credentials}`
-            },
-            body: JSON.stringify({
-              ...internData,
-              boardId: Number(id)
-            })
-          });
-        } else {
-          // Para tutors, usar PUT para actualizar la relación
-          response = await fetch(endpoint, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Basic ${credentials}`
-            }
-          });
-        }
-
-        if (response.ok) {
-          setShowAddParticipantModal(false);
-          setParticipantError('');
-          setSelectedParticipantId(null);
-          setSearchQuery('');
-          loadProjectDetails(); // Recargar para actualizar la lista
-        } else {
-          const errorData = await response.text();
-          setParticipantError('Error al añadir participante: ' + errorData);
-        }
-      } catch (error) {
-        console.error('Error adding existing participant:', error);
-        setParticipantError('Error al añadir participante');
-      }
+    if (!selectedParticipantId) {
+      setParticipantError('Por favor selecciona un participante');
       return;
     }
     
-    // Si es modo "create" (crear nuevo)
-      // Frontend validation to avoid server 500 due to DB constraints (e.g. university not nullable)
-      setParticipantError('');
-      if (!participantForm.name || !participantForm.email || !participantForm.password) {
-        setParticipantError('Por favor completa nombre, email y contraseña');
-        return;
-      }
-      if ((participantType === 'academic' || participantType === 'intern') && !participantForm.universityId) {
-        setParticipantError('Selecciona o crea una universidad antes de continuar');
-        return;
-      }
-      
-      // Validar que existan tutores para crear un interno
-      if (participantType === 'intern') {
-        if (!participantForm.academyTutorId) {
-          setParticipantError('Debes seleccionar un Tutor Académico');
-          return;
-        }
-        if (!companyTutor) {
-          setParticipantError('Debes asignar un Tutor de Empresa al proyecto primero');
-          return;
-        }
-      }
-    
     try {
       let endpoint = '';
-      let body = {};
-
+      
       if (participantType === 'academic') {
-        endpoint = 'http://localhost:8080/academytutors/add';
-        body = {
-          name: participantForm.name,
-          email: participantForm.email,
-          password: participantForm.password,
-          department: participantForm.department,
-          universityId: Number(participantForm.universityId)
-        };
+        // Añadir tutor académico al board
+        endpoint = `http://localhost:8080/boards/${id}/academicTutor/${selectedParticipantId}`;
       } else if (participantType === 'company') {
-        endpoint = 'http://localhost:8080/companytutors/add';
-        body = {
-          name: participantForm.name,
-          email: participantForm.email,
-          password: participantForm.password,
-          // company tutors don't need universityId
-          position: participantForm.department // reuse department field as position
-        };
+        // Asignar tutor de empresa al board
+        endpoint = `http://localhost:8080/boards/${id}/companyTutor/${selectedParticipantId}`;
       } else if (participantType === 'intern') {
-        endpoint = 'http://localhost:8080/interns/add';
-        body = {
-          name: participantForm.name,
-          email: participantForm.email,
-          password: participantForm.password,
-          university: Number(participantForm.universityId),
-          career: participantForm.career,
-          semester: Number(participantForm.semester),
-          boardId: Number(id),
-          // Usar los tutores seleccionados del formulario
-          academyTutorId: Number(participantForm.academyTutorId),
-          companyTutorId: companyTutor.id
-        };
+        // Asignar board al interno (actualizar su boardId)
+        endpoint = `http://localhost:8080/interns/update/${selectedParticipantId}`;
       }
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Basic ${credentials}`
-        },
-        body: JSON.stringify(body)
-      });
+      let response;
+      
+      if (participantType === 'intern') {
+        // Para interns, necesitamos hacer PUT con el objeto completo
+        const internResponse = await fetch(`http://localhost:8080/interns/Read/${selectedParticipantId}`, {
+          headers: { 'Authorization': `Basic ${credentials}` }
+        });
+        const internData = await internResponse.json();
+        
+        response = await fetch(endpoint, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${credentials}`
+          },
+          body: JSON.stringify({
+            ...internData,
+            boardId: Number(id)
+          })
+        });
+      } else {
+        // Para tutors, usar PUT para actualizar la relación
+        response = await fetch(endpoint, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Basic ${credentials}`
+          }
+        });
+      }
 
       if (response.ok) {
-        // Limpiar formulario
-        setParticipantForm({
-          name: '',
-          email: '',
-          password: '',
-          department: '',
-          career: '',
-          semester: '',
-          universityId: null,
-          academyTutorId: null,
-          companyTutorId: null
-        });
         setShowAddParticipantModal(false);
         setParticipantError('');
+        setSelectedParticipantId(null);
+        setSearchQuery('');
         loadProjectDetails(); // Recargar para actualizar la lista
       } else {
         const errorData = await response.text();
-        alert('Error al agregar participante: ' + errorData);
+        setParticipantError('Error al añadir participante: ' + errorData);
       }
     } catch (error) {
-      console.error('Error adding participant:', error);
-      alert('Error al agregar participante');
+      console.error('Error adding existing participant:', error);
+      setParticipantError('Error al añadir participante');
     }
   };
 
@@ -535,9 +390,9 @@ function ProjectDetail() {
         body: JSON.stringify({
           name: editBoardForm.name,
           description: editBoardForm.description,
-          startDate: project.startDate,
-          endDate: project.endDate,
-          companyTutorId: project.companyTutorId
+          startDate: project?.startDate || null,
+          endDate: project?.endDate || null,
+          companyTutorId: project?.companyTutorId || null
         })
       });
 
@@ -551,6 +406,211 @@ function ProjectDetail() {
     } catch (error) {
       console.error('Error al actualizar proyecto:', error);
       alert('Error al actualizar proyecto');
+    }
+  };
+
+  // ========== FUNCIONES DE LISTAS ==========
+  const loadLists = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:8080/lists/board/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const listsData = await response.json();
+        
+        // Cargar las tareas de cada lista
+        const listsWithTasks = await Promise.all(
+          listsData.map(async (list) => {
+            const tasksResponse = await fetch(`http://localhost:8080/tasks/list/${list.id}`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const tasks = tasksResponse.ok ? await tasksResponse.json() : [];
+            return { ...list, tasks };
+          })
+        );
+        
+        setLists(listsWithTasks);
+      }
+    } catch (error) {
+      console.error('Error loading lists:', error);
+    }
+  };
+
+  const handleAddList = async () => {
+    if (!newListName.trim()) {
+      alert('El nombre de la lista es requerido');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:8080/lists/add', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: newListName,
+          boardId: parseInt(id)
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al crear la lista');
+      }
+
+      setNewListName('');
+      setShowAddListModal(false);
+      await loadLists();
+    } catch (error) {
+      console.error('Error creating list:', error);
+      alert('Error al crear la lista');
+    }
+  };
+
+  const handleDeleteList = async (listId) => {
+    if (!window.confirm('¿Estás seguro de eliminar esta lista y todas sus tareas?')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:8080/lists/${listId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al eliminar la lista');
+      }
+
+      await loadLists();
+    } catch (error) {
+      console.error('Error deleting list:', error);
+      alert('Error al eliminar la lista');
+    }
+  };
+
+  // ========== FUNCIONES DE TAREAS ==========
+  const handleAddTask = async () => {
+    if (!taskForm.title.trim()) {
+      alert('El título de la tarea es requerido');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      
+      const response = await fetch('http://localhost:8080/tasks/add', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: taskForm.title,
+          description: taskForm.description,
+          dueDate: taskForm.dueDate || null,
+          status: taskForm.status || 'To Do',
+          listId: selectedListId,
+          createdByTutorId: userData.id || 1,
+          internIds: []
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al crear la tarea');
+      }
+
+      setTaskForm({ title: '', description: '', dueDate: '', status: 'To Do' });
+      setShowAddTaskModal(false);
+      await loadLists();
+    } catch (error) {
+      console.error('Error creating task:', error);
+      alert('Error al crear la tarea');
+    }
+  };
+
+  const handleEditTask = (task) => {
+    setSelectedTask(task);
+    setTaskForm({
+      title: task.title,
+      description: task.description || '',
+      dueDate: task.dueDate || '',
+      status: task.status || 'To Do'
+    });
+    setShowEditTaskModal(true);
+  };
+
+  const handleUpdateTask = async () => {
+    if (!taskForm.title.trim()) {
+      alert('El título de la tarea es requerido');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:8080/tasks/${selectedTask.taskId}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: taskForm.title,
+          description: taskForm.description,
+          dueDate: taskForm.dueDate || null,
+          status: taskForm.status,
+          listId: selectedTask.listId,
+          createdByTutorId: selectedTask.createdByTutorId,
+          internIds: selectedTask.internIds || []
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar la tarea');
+      }
+
+      setTaskForm({ title: '', description: '', dueDate: '', status: 'To Do' });
+      setShowEditTaskModal(false);
+      setSelectedTask(null);
+      await loadLists();
+    } catch (error) {
+      console.error('Error updating task:', error);
+      alert('Error al actualizar la tarea');
+    }
+  };
+
+  const handleDeleteTask = async (taskId) => {
+    if (!window.confirm('¿Estás seguro de eliminar esta tarea?')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:8080/tasks/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al eliminar la tarea');
+      }
+
+      await loadLists();
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      alert('Error al eliminar la tarea');
     }
   };
 
@@ -582,10 +642,8 @@ function ProjectDetail() {
         
         <nav className="top-nav">
           <button onClick={() => navigate('/dashboard')} className="nav-item active">Inicio</button>
-          <button onClick={() => navigate('/participants')} className="nav-item">Equipo</button>
-          <button onClick={() => navigate('/tasks')} className="nav-item">Tareas</button>
+          <button onClick={() => navigate('/participants')} className="nav-item">Participantes</button>
           <button onClick={() => navigate('/universities')} className="nav-item">Universidades</button>
-          <button onClick={() => navigate('/reports')} className="nav-item">Reportes</button>
           <button onClick={() => navigate('/settings')} className="nav-item">Configuración</button>
         </nav>
 
@@ -834,32 +892,57 @@ function ProjectDetail() {
                       <div key={list.id} className="list-card">
                         <div className="list-header">
                           <h3>{list.name}</h3>
-                          <button 
-                            className="btn-add-task"
-                            onClick={() => {
-                              setSelectedListId(list.id);
-                              setShowAddTaskModal(true);
-                            }}
-                          >
-                            +
-                          </button>
+                          <div className="list-actions">
+                            <button 
+                              className="btn-add-task"
+                              onClick={() => {
+                                setSelectedListId(list.id);
+                                setTaskForm({ title: '', description: '', dueDate: '', status: 'To Do' });
+                                setShowAddTaskModal(true);
+                              }}
+                              title="Agregar tarea"
+                            >
+                              +
+                            </button>
+                            <button 
+                              className="btn-delete-list"
+                              onClick={() => handleDeleteList(list.id)}
+                              title="Eliminar lista"
+                            >
+                              ✕
+                            </button>
+                          </div>
                         </div>
                         <div className="tasks-list">
                           {list.tasks && list.tasks.length > 0 ? (
                             list.tasks.map((task) => (
-                              <div key={task.id} className="task-item">
-                                <input type="checkbox" />
-                                <span>{task.name}</span>
+                              <div key={task.taskId} className="task-item" onClick={() => handleEditTask(task)}>
+                                <div className="task-content">
+                                  <h4>{task.title}</h4>
+                                  <span className={`task-status status-${task.status.toLowerCase().replace(' ', '-')}`}>
+                                    {task.status}
+                                  </span>
+                                </div>
+                                <button 
+                                  className="btn-delete-task"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteTask(task.taskId);
+                                  }}
+                                  title="Eliminar tarea"
+                                >
+                                  ✕
+                                </button>
                               </div>
                             ))
                           ) : (
-                            <p className="empty-message-small">Sin tareas. Agrega una nueva</p>
+                            <p className="empty-message-small">Sin tareas</p>
                           )}
                         </div>
                       </div>
                     ))
                   ) : (
-                    <p className="empty-message">No hay listas creadas. Crea una lista para comenzar.</p>
+                    <p className="empty-message">No hay listas. Crea una lista para comenzar.</p>
                   )}
                 </div>
               </div>
@@ -910,190 +993,49 @@ function ProjectDetail() {
               </button>
             </div>
 
-            {/* Modo: Añadir existente o Crear nuevo */}
-            <div className="add-mode-selector">
-              <button 
-                className={`mode-btn ${addMode === 'existing' ? 'active' : ''}`}
-                onClick={() => {
-                  setAddMode('existing');
-                  setParticipantError('');
-                }}
-              >
-                Añadir Existente
-              </button>
-              <button 
-                className={`mode-btn ${addMode === 'create' ? 'active' : ''}`}
-                onClick={() => {
-                  setAddMode('create');
-                  setParticipantError('');
-                  setSelectedParticipantId(null);
-                }}
-              >
-                Crear Nuevo
-              </button>
-            </div>
-
-            {/* Modo: AÑADIR EXISTENTE */}
-            {addMode === 'existing' && (
-              <>
-                <div className="search-container">
-                  <input
-                    type="text"
-                    placeholder={`Buscar por nombre o email...`}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="modal-input search-input"
-                  />
-                </div>
-
-                <div className="participants-list">
-                  {availableParticipants.length > 0 ? (
-                    availableParticipants
-                      .filter(p => 
-                        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        p.email.toLowerCase().includes(searchQuery.toLowerCase())
-                      )
-                      .map((participant) => (
-                        <div 
-                          key={participant.id} 
-                          className={`participant-item ${selectedParticipantId === participant.id ? 'selected' : ''}`}
-                          onClick={() => setSelectedParticipantId(participant.id)}
-                        >
-                          <div className="participant-info">
-                            <div className="participant-details">
-                              <strong>{participant.name}</strong>
-                              <span className="participant-email">{participant.email}</span>
-                              {participant.career && <span className="participant-extra">{participant.career}</span>}
-                              {participant.department && <span className="participant-extra">{participant.department}</span>}
-                            </div>
-                          </div>
-                          {selectedParticipantId === participant.id && (
-                            <div className="selected-check">✓</div>
-                          )}
-                        </div>
-                      ))
-                  ) : (
-                    <p className="empty-search">
-                      No hay {participantType === 'academic' ? 'tutores académicos' : 'internos'} disponibles para añadir
-                    </p>
-                  )}
-                </div>
-              </>
-            )}
-
-            {/* Modo: CREAR NUEVO */}
-            {addMode === 'create' && (
-              <>
-            {/* Formulario común */}
-            <input
-              type="text"
-              placeholder="Nombre completo"
-              value={participantForm.name}
-              onChange={(e) => setParticipantForm({...participantForm, name: e.target.value})}
-              className="modal-input"
-            />
-            <input
-              type="email"
-              placeholder="Correo electrónico"
-              value={participantForm.email}
-              onChange={(e) => setParticipantForm({...participantForm, email: e.target.value})}
-              className="modal-input"
-            />
-            <input
-              type="password"
-              placeholder="Contraseña"
-              value={participantForm.password}
-              onChange={(e) => setParticipantForm({...participantForm, password: e.target.value})}
-              className="modal-input"
-            />
-
-            {/* Campos específicos para Tutor Académico */}
-            {participantType === 'academic' && (
+            {/* Búsqueda y selección de participantes existentes */}
+            <div className="search-container">
               <input
                 type="text"
-                placeholder="Departamento"
-                value={participantForm.department}
-                onChange={(e) => setParticipantForm({...participantForm, department: e.target.value})}
-                className="modal-input"
+                placeholder={`Buscar por nombre o email...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="modal-input search-input"
               />
-            )}
-
-            {/* Campos específicos para Interno */}
-            {participantType === 'intern' && (
-              <>
-                <input
-                  type="text"
-                  placeholder="Carrera"
-                  value={participantForm.career}
-                  onChange={(e) => setParticipantForm({...participantForm, career: e.target.value})}
-                  className="modal-input"
-                />
-                <input
-                  type="number"
-                  placeholder="Semestre"
-                  value={participantForm.semester}
-                  onChange={(e) => setParticipantForm({...participantForm, semester: e.target.value})}
-                  className="modal-input"
-                />
-                
-                {/* Selector de Tutor Académico */}
-                <div className="tutor-selector">
-                  <label htmlFor="academicTutor">Tutor Académico *</label>
-                  <select
-                    id="academicTutor"
-                    value={participantForm.academyTutorId ?? ''}
-                    onChange={(e) => setParticipantForm({...participantForm, academyTutorId: e.target.value ? Number(e.target.value) : null})}
-                    className="modal-input"
-                    required
-                  >
-                    <option value="">-- Seleccionar tutor académico --</option>
-                    {academicTutors.map((tutor) => (
-                      <option key={tutor.id} value={tutor.id}>{tutor.name}</option>
-                    ))}
-                  </select>
-                  {academicTutors.length === 0 && (
-                    <small style={{color: '#f59e0b'}}>No hay tutores académicos. Agrega uno primero.</small>
-                  )}
-                </div>
-
-                {/* Selector de Tutor de Empresa */}
-                <div className="tutor-selector">
-                  <label htmlFor="companyTutor">Tutor de Empresa *</label>
-                  {companyTutor ? (
-                    <div className="selected-tutor">
-                      <span>{companyTutor.name}</span>
-                      <small>(Asignado al proyecto)</small>
-                    </div>
-                  ) : (
-                    <small style={{color: '#f59e0b'}}>No hay tutor de empresa. Asigna uno al proyecto primero.</small>
-                  )}
-                </div>
-              </>
-            )}
-
-            {/* Selector de Universidad (solo para modo crear) */}
-            {addMode === 'create' && (participantType === 'academic' || participantType === 'intern') && (
-            <div className="university-selector">
-              <label htmlFor="university">Universidad</label>
-              <div className="university-row">
-                <select
-                  id="university"
-                  value={participantForm.universityId ?? ''}
-                  onChange={(e) => setParticipantForm({...participantForm, universityId: e.target.value ? Number(e.target.value) : null})}
-                  className="modal-input"
-                >
-                  <option value="">-- Seleccionar universidad --</option>
-                  {universities.map((u) => (
-                    <option key={u.id} value={u.id}>{u.name}</option>
-                  ))}
-                </select>
-                <button className="btn-small" onClick={() => setShowAddUniversityModal(true)}>+
-                </button>
-              </div>
             </div>
-            )}
-            </>
-            )}
+
+            <div className="participants-list">
+              {availableParticipants.length > 0 ? (
+                availableParticipants
+                  .filter(p => 
+                    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    p.email.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                  .map((participant) => (
+                    <div 
+                      key={participant.id} 
+                      className={`participant-item ${selectedParticipantId === participant.id ? 'selected' : ''}`}
+                      onClick={() => setSelectedParticipantId(participant.id)}
+                    >
+                      <div className="participant-info">
+                        <div className="participant-details">
+                          <strong>{participant.name}</strong>
+                          <span className="participant-email">{participant.email}</span>
+                          {participant.career && <span className="participant-extra">{participant.career}</span>}
+                          {participant.department && <span className="participant-extra">{participant.department}</span>}
+                        </div>
+                      </div>
+                      {selectedParticipantId === participant.id && (
+                        <div className="selected-check">✓</div>
+                      )}
+                    </div>
+                  ))
+              ) : (
+                <p className="empty-search">
+                  No hay {participantType === 'academic' ? 'tutores académicos' : participantType === 'company' ? 'tutores de empresa' : 'internos'} disponibles para añadir
+                </p>
+              )}
+            </div>
 
             </div>
             
@@ -1102,7 +1044,7 @@ function ProjectDetail() {
                 Cancelar
               </button>
               <button className="btn-submit" onClick={handleAddParticipant}>
-                {addMode === 'existing' ? 'Añadir' : 'Crear'} {participantType === 'academic' ? 'Tutor' : participantType === 'company' ? 'Tutor' : 'Interno'}
+                Añadir {participantType === 'academic' ? 'Tutor Académico' : participantType === 'company' ? 'Tutor de Empresa' : 'Interno'}
               </button>
             </div>
           </div>
@@ -1141,21 +1083,91 @@ function ProjectDetail() {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2>Nueva Tarea</h2>
             <div className="modal-body-scroll">
-            <input
-              type="text"
-              placeholder="Nombre de la tarea"
-              value={newTaskName}
-              onChange={(e) => setNewTaskName(e.target.value)}
-              className="modal-input"
-            />
-            <div className="modal-actions">
-              <button className="btn-cancel" onClick={() => setShowAddTaskModal(false)}>
-                Cancelar
-              </button>
-              <button className="btn-submit" onClick={handleAddTask}>
-                Crear Tarea
-              </button>
+              <input
+                type="text"
+                placeholder="Título de la tarea *"
+                value={taskForm.title}
+                onChange={(e) => setTaskForm({...taskForm, title: e.target.value})}
+                className="modal-input"
+              />
+              <textarea
+                placeholder="Descripción"
+                value={taskForm.description}
+                onChange={(e) => setTaskForm({...taskForm, description: e.target.value})}
+                className="modal-input modal-textarea"
+                rows="3"
+              />
+              <input
+                type="date"
+                value={taskForm.dueDate}
+                onChange={(e) => setTaskForm({...taskForm, dueDate: e.target.value})}
+                className="modal-input"
+              />
+              <select
+                value={taskForm.status}
+                onChange={(e) => setTaskForm({...taskForm, status: e.target.value})}
+                className="modal-input"
+              >
+                <option value="To Do">Por Hacer</option>
+                <option value="In Progress">En Progreso</option>
+                <option value="Done">Completada</option>
+              </select>
+              <div className="modal-actions">
+                <button className="btn-cancel" onClick={() => setShowAddTaskModal(false)}>
+                  Cancelar
+                </button>
+                <button className="btn-submit" onClick={handleAddTask}>
+                  Crear Tarea
+                </button>
+              </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Edit Task */}
+      {showEditTaskModal && (
+        <div className="modal-overlay" onClick={() => setShowEditTaskModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Editar Tarea</h2>
+            <div className="modal-body-scroll">
+              <input
+                type="text"
+                placeholder="Título de la tarea *"
+                value={taskForm.title}
+                onChange={(e) => setTaskForm({...taskForm, title: e.target.value})}
+                className="modal-input"
+              />
+              <textarea
+                placeholder="Descripción"
+                value={taskForm.description}
+                onChange={(e) => setTaskForm({...taskForm, description: e.target.value})}
+                className="modal-input modal-textarea"
+                rows="3"
+              />
+              <input
+                type="date"
+                value={taskForm.dueDate}
+                onChange={(e) => setTaskForm({...taskForm, dueDate: e.target.value})}
+                className="modal-input"
+              />
+              <select
+                value={taskForm.status}
+                onChange={(e) => setTaskForm({...taskForm, status: e.target.value})}
+                className="modal-input"
+              >
+                <option value="To Do">Por Hacer</option>
+                <option value="In Progress">En Progreso</option>
+                <option value="Done">Completada</option>
+              </select>
+              <div className="modal-actions">
+                <button className="btn-cancel" onClick={() => setShowEditTaskModal(false)}>
+                  Cancelar
+                </button>
+                <button className="btn-submit" onClick={handleUpdateTask}>
+                  Guardar Cambios
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1215,6 +1227,39 @@ function ProjectDetail() {
                 Crear Universidad
               </button>
             </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Edit Board */}
+      {showEditBoardModal && (
+        <div className="modal-overlay" onClick={() => setShowEditBoardModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Editar Proyecto</h2>
+            <div className="modal-body-scroll">
+              <input
+                type="text"
+                placeholder="Nombre del proyecto"
+                value={editBoardForm.name}
+                onChange={(e) => setEditBoardForm({...editBoardForm, name: e.target.value})}
+                className="modal-input"
+              />
+              <textarea
+                placeholder="Descripción del proyecto"
+                value={editBoardForm.description}
+                onChange={(e) => setEditBoardForm({...editBoardForm, description: e.target.value})}
+                className="modal-input modal-textarea"
+                rows="4"
+              />
+              <div className="modal-actions">
+                <button className="btn-cancel" onClick={() => setShowEditBoardModal(false)}>
+                  Cancelar
+                </button>
+                <button className="btn-submit" onClick={handleEditBoard}>
+                  Guardar Cambios
+                </button>
+              </div>
             </div>
           </div>
         </div>
