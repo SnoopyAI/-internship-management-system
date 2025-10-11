@@ -189,9 +189,7 @@ function Dashboard() {
         <nav className="top-nav">
           <button onClick={() => navigate('/dashboard')} className="nav-item active">Inicio</button>
           <button onClick={() => navigate('/participants')} className="nav-item">Equipo</button>
-          <button onClick={() => navigate('/tasks')} className="nav-item">Tareas</button>
           <button onClick={() => navigate('/universities')} className="nav-item">Universidades</button>
-          <button onClick={() => navigate('/reports')} className="nav-item">Reportes</button>
           <button onClick={() => navigate('/settings')} className="nav-item">Configuración</button>
         </nav>
 

@@ -49,6 +49,13 @@ function ProjectDetail() {
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [selectedListId, setSelectedListId] = useState(null);
   const [newTaskName, setNewTaskName] = useState('');
+  
+  // Estados para editar board
+  const [showEditBoardModal, setShowEditBoardModal] = useState(false);
+  const [editBoardForm, setEditBoardForm] = useState({
+    name: '',
+    description: ''
+  });
 
   useEffect(() => {
     loadProjectDetails();
@@ -503,6 +510,50 @@ function ProjectDetail() {
     }
   };
 
+  const handleOpenEditBoard = () => {
+    setEditBoardForm({
+      name: project?.name || '',
+      description: project?.description || ''
+    });
+    setShowEditBoardModal(true);
+  };
+
+  const handleEditBoard = async () => {
+    if (!editBoardForm.name.trim()) {
+      alert('El nombre del proyecto es requerido');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:8080/boards/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: editBoardForm.name,
+          description: editBoardForm.description,
+          startDate: project.startDate,
+          endDate: project.endDate,
+          companyTutorId: project.companyTutorId
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar el proyecto');
+      }
+
+      await loadProjectDetails();
+      setShowEditBoardModal(false);
+      alert('Proyecto actualizado exitosamente');
+    } catch (error) {
+      console.error('Error al actualizar proyecto:', error);
+      alert('Error al actualizar proyecto');
+    }
+  };
+
   if (loading) {
     return (
       <div className="loading-screen">
@@ -555,12 +606,21 @@ function ProjectDetail() {
           </button>
           
           <div className="sidebar-section">
-            <h2 className="sidebar-project-name">{project.name}</h2>
+            <div className="project-title-section">
+              <h2 className="sidebar-project-name">{project.name}</h2>
+              <button 
+                className="btn-edit-board" 
+                onClick={handleOpenEditBoard}
+                title="Editar proyecto"
+              >
+                ✎
+              </button>
+            </div>
             <p className="sidebar-description">{project.description || 'Sin descripción'}</p>
           </div>
 
           <div className="sidebar-section">
-            <h3 className="sidebar-heading">📅 Información</h3>
+            <h3 className="sidebar-heading">Información</h3>
             <div className="sidebar-info-item">
               <span className="info-label">Inicio:</span>
               <span className="info-value">{project.startDate || 'No definida'}</span>
@@ -1042,7 +1102,7 @@ function ProjectDetail() {
                 Cancelar
               </button>
               <button className="btn-submit" onClick={handleAddParticipant}>
-                {addMode === 'existing' ? 'Añadir' : 'Crear'} {participantType === 'academic' ? 'Tutor' : 'Interno'}
+                {addMode === 'existing' ? 'Añadir' : 'Crear'} {participantType === 'academic' ? 'Tutor' : participantType === 'company' ? 'Tutor' : 'Interno'}
               </button>
             </div>
           </div>
@@ -1096,6 +1156,39 @@ function ProjectDetail() {
                 Crear Tarea
               </button>
             </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Edit Board */}
+      {showEditBoardModal && (
+        <div className="modal-overlay" onClick={() => setShowEditBoardModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Editar Proyecto</h2>
+            <div className="modal-body-scroll">
+              <input
+                type="text"
+                placeholder="Nombre del proyecto"
+                value={editBoardForm.name}
+                onChange={(e) => setEditBoardForm({...editBoardForm, name: e.target.value})}
+                className="modal-input"
+              />
+              <textarea
+                placeholder="Descripción del proyecto"
+                value={editBoardForm.description}
+                onChange={(e) => setEditBoardForm({...editBoardForm, description: e.target.value})}
+                className="modal-input modal-textarea"
+                rows="4"
+              />
+              <div className="modal-actions">
+                <button className="btn-cancel" onClick={() => setShowEditBoardModal(false)}>
+                  Cancelar
+                </button>
+                <button className="btn-submit" onClick={handleEditBoard}>
+                  Guardar Cambios
+                </button>
+              </div>
             </div>
           </div>
         </div>
