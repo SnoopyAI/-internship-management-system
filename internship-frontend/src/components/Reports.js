@@ -103,7 +103,6 @@ function Reports() {
           </div>
 
           <div className="stat-card">
-            <div className="stat-icon">📋</div>
             <div className="stat-info">
               <h3>{stats.pendingTasks}</h3>
               <p>Tareas Pendientes</p>
@@ -111,7 +110,6 @@ function Reports() {
           </div>
 
           <div className="stat-card">
-            <div className="stat-icon">👥</div>
             <div className="stat-info">
               <h3>{stats.totalParticipants}</h3>
               <p>Participantes</p>
@@ -119,7 +117,6 @@ function Reports() {
           </div>
 
           <div className="stat-card">
-            <div className="stat-icon">📈</div>
             <div className="stat-info">
               <h3>{stats.averageProgress}%</h3>
               <p>Progreso Promedio</p>

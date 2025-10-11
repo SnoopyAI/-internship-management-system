@@ -24,7 +24,7 @@ public class Intern extends User {
     private Board board;
 
     @ManyToOne
-    @JoinColumn(name = "academy_tutor_id", nullable = false, foreignKey = @ForeignKey(name = "FK_BOARD_INTERN"))
+    @JoinColumn(name = "academy_tutor_id", nullable = false, foreignKey = @ForeignKey(name = "FK_ACADEMY_TUTOR_INTERN"))
     private AcademyTutor academyTutor;
 
     @ManyToOne

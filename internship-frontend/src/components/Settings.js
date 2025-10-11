@@ -74,25 +74,25 @@ function Settings() {
               className={`settings-nav-btn ${activeSection === 'profile' ? 'active' : ''}`}
               onClick={() => setActiveSection('profile')}
             >
-              👤 Perfil
+              Perfil
             </button>
             <button
               className={`settings-nav-btn ${activeSection === 'security' ? 'active' : ''}`}
               onClick={() => setActiveSection('security')}
             >
-              🔒 Seguridad
+              Seguridad
             </button>
             <button
               className={`settings-nav-btn ${activeSection === 'notifications' ? 'active' : ''}`}
               onClick={() => setActiveSection('notifications')}
             >
-              🔔 Notificaciones
+              Notificaciones
             </button>
             <button
               className={`settings-nav-btn ${activeSection === 'appearance' ? 'active' : ''}`}
               onClick={() => setActiveSection('appearance')}
             >
-              🎨 Apariencia
+              Apariencia
             </button>
           </aside>
 

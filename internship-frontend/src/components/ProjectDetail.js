@@ -17,6 +17,12 @@ function ProjectDetail() {
   const [participantType, setParticipantType] = useState('academic'); // 'academic' o 'intern'
   const [openParticipantAfterUniversity, setOpenParticipantAfterUniversity] = useState(false);
   
+  // Nuevo: Estados para modo de añadir participantes
+  const [addMode, setAddMode] = useState('existing'); // 'existing' o 'create'
+  const [searchQuery, setSearchQuery] = useState('');
+  const [availableParticipants, setAvailableParticipants] = useState([]);
+  const [selectedParticipantId, setSelectedParticipantId] = useState(null);
+  
   // Estados para formulario de participante
   const [participantForm, setParticipantForm] = useState({
     name: '',
@@ -25,7 +31,9 @@ function ProjectDetail() {
     department: '', // Para tutor académico
     career: '', // Para interno
     semester: '', // Para interno
-    universityId: null
+    universityId: null,
+    academyTutorId: null, // Para interno
+    companyTutorId: null  // Para interno
   });
   const [participantError, setParticipantError] = useState('');
   
@@ -46,6 +54,52 @@ function ProjectDetail() {
     loadProjectDetails();
     loadUniversities();
   }, [id]);
+
+  // Cargar participantes disponibles cuando se abre el modal
+  useEffect(() => {
+    if (showAddParticipantModal && addMode === 'existing') {
+      loadAvailableParticipants();
+    }
+  }, [showAddParticipantModal, addMode, participantType]);
+
+  const loadAvailableParticipants = async () => {
+    const credentials = localStorage.getItem('authCredentials');
+    let endpoint = '';
+    
+    if (participantType === 'academic') {
+      endpoint = 'http://localhost:8080/academytutors/ReadAll';
+    } else if (participantType === 'company') {
+      endpoint = 'http://localhost:8080/companytutors/ReadAll';
+    } else if (participantType === 'intern') {
+      endpoint = 'http://localhost:8080/interns/ReadAll';
+    }
+
+    try {
+      const response = await fetch(endpoint, {
+        headers: {
+          'Authorization': `Basic ${credentials}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Filtrar participantes que NO estén ya en este board
+        const filtered = data.filter(participant => {
+          if (participantType === 'academic') {
+            return !academicTutors.some(t => t.id === participant.id);
+          } else if (participantType === 'company') {
+            return companyTutor?.id !== participant.id;
+          } else if (participantType === 'intern') {
+            return !interns.some(i => i.id === participant.id);
+          }
+          return true;
+        });
+        setAvailableParticipants(filtered);
+      }
+    } catch (error) {
+      console.error('Error loading available participants:', error);
+    }
+  };
 
   const loadUniversities = async () => {
     const credentials = localStorage.getItem('authCredentials');
@@ -75,8 +129,8 @@ function ProjectDetail() {
     }
 
     try {
-      // Cargar detalles del proyecto
-      const response = await fetch(`http://localhost:8080/boards/${id}`, {
+      // Cargar detalles del proyecto con relaciones completas
+      const response = await fetch(`http://localhost:8080/boards/${id}/details`, {
         headers: {
           'Authorization': `Basic ${credentials}`
         }
@@ -86,12 +140,17 @@ function ProjectDetail() {
         const data = await response.json();
         setProject(data);
         
-        // Cargar tutores asociados si existen
-        if (data.academyTutors) {
+        // Cargar tutores asociados
+        if (data.academyTutors && Array.isArray(data.academyTutors)) {
           setAcademicTutors(data.academyTutors);
+        } else {
+          setAcademicTutors([]);
         }
+        
         if (data.companyTutor) {
           setCompanyTutor(data.companyTutor);
+        } else {
+          setCompanyTutor(null);
         }
         
         // Cargar internos asociados al proyecto
@@ -190,6 +249,76 @@ function ProjectDetail() {
 
   const handleAddParticipant = async () => {
     const credentials = localStorage.getItem('authCredentials');
+    
+    // Si es modo "existing" (añadir existente)
+    if (addMode === 'existing') {
+      if (!selectedParticipantId) {
+        setParticipantError('Por favor selecciona un participante');
+        return;
+      }
+      
+      try {
+        let endpoint = '';
+        
+        if (participantType === 'academic') {
+          // Añadir tutor académico al board
+          endpoint = `http://localhost:8080/boards/${id}/academicTutor/${selectedParticipantId}`;
+        } else if (participantType === 'company') {
+          // Asignar tutor de empresa al board
+          endpoint = `http://localhost:8080/boards/${id}/companyTutor/${selectedParticipantId}`;
+        } else if (participantType === 'intern') {
+          // Asignar board al interno (actualizar su boardId)
+          endpoint = `http://localhost:8080/interns/update/${selectedParticipantId}`;
+        }
+
+        let response;
+        
+        if (participantType === 'intern') {
+          // Para interns, necesitamos hacer PUT con el objeto completo
+          const internResponse = await fetch(`http://localhost:8080/interns/Read/${selectedParticipantId}`, {
+            headers: { 'Authorization': `Basic ${credentials}` }
+          });
+          const internData = await internResponse.json();
+          
+          response = await fetch(endpoint, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Basic ${credentials}`
+            },
+            body: JSON.stringify({
+              ...internData,
+              boardId: Number(id)
+            })
+          });
+        } else {
+          // Para tutors, usar PUT para actualizar la relación
+          response = await fetch(endpoint, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Basic ${credentials}`
+            }
+          });
+        }
+
+        if (response.ok) {
+          setShowAddParticipantModal(false);
+          setParticipantError('');
+          setSelectedParticipantId(null);
+          setSearchQuery('');
+          loadProjectDetails(); // Recargar para actualizar la lista
+        } else {
+          const errorData = await response.text();
+          setParticipantError('Error al añadir participante: ' + errorData);
+        }
+      } catch (error) {
+        console.error('Error adding existing participant:', error);
+        setParticipantError('Error al añadir participante');
+      }
+      return;
+    }
+    
+    // Si es modo "create" (crear nuevo)
       // Frontend validation to avoid server 500 due to DB constraints (e.g. university not nullable)
       setParticipantError('');
       if (!participantForm.name || !participantForm.email || !participantForm.password) {
@@ -199,6 +328,18 @@ function ProjectDetail() {
       if ((participantType === 'academic' || participantType === 'intern') && !participantForm.universityId) {
         setParticipantError('Selecciona o crea una universidad antes de continuar');
         return;
+      }
+      
+      // Validar que existan tutores para crear un interno
+      if (participantType === 'intern') {
+        if (!participantForm.academyTutorId) {
+          setParticipantError('Debes seleccionar un Tutor Académico');
+          return;
+        }
+        if (!companyTutor) {
+          setParticipantError('Debes asignar un Tutor de Empresa al proyecto primero');
+          return;
+        }
       }
     
     try {
@@ -212,7 +353,7 @@ function ProjectDetail() {
           email: participantForm.email,
           password: participantForm.password,
           department: participantForm.department,
-          universityId: participantForm.universityId
+          universityId: Number(participantForm.universityId)
         };
       } else if (participantType === 'company') {
         endpoint = 'http://localhost:8080/companytutors/add';
@@ -229,10 +370,13 @@ function ProjectDetail() {
           name: participantForm.name,
           email: participantForm.email,
           password: participantForm.password,
-          universityId: participantForm.universityId,
+          university: Number(participantForm.universityId),
           career: participantForm.career,
-          semester: participantForm.semester,
-          boardId: id
+          semester: Number(participantForm.semester),
+          boardId: Number(id),
+          // Usar los tutores seleccionados del formulario
+          academyTutorId: Number(participantForm.academyTutorId),
+          companyTutorId: companyTutor.id
         };
       }
 
@@ -254,7 +398,9 @@ function ProjectDetail() {
           department: '',
           career: '',
           semester: '',
-          universityId: null
+          universityId: null,
+          academyTutorId: null,
+          companyTutorId: null
         });
         setShowAddParticipantModal(false);
         setParticipantError('');
@@ -317,6 +463,44 @@ function ProjectDetail() {
       return;
     }
     setShowAddParticipantModal(true);
+  };
+
+  const handleDeleteParticipant = async (participantId, type) => {
+    if (!window.confirm(`¿Estás seguro de eliminar este ${type === 'academic' ? 'tutor académico' : type === 'intern' ? 'interno' : 'tutor de empresa'} del proyecto?`)) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      let endpoint = '';
+      
+      if (type === 'academic') {
+        endpoint = `http://localhost:8080/boards/${id}/academicTutor/${participantId}`;
+      } else if (type === 'company') {
+        endpoint = `http://localhost:8080/boards/${id}/companyTutor`;
+      } else if (type === 'intern') {
+        endpoint = `http://localhost:8080/boards/${id}/intern/${participantId}`;
+      }
+
+      const response = await fetch(endpoint, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al eliminar participante');
+      }
+
+      // Recargar los detalles del proyecto
+      await loadProjectDetails();
+      alert('Participante eliminado exitosamente');
+    } catch (error) {
+      console.error('Error al eliminar participante:', error);
+      alert('Error al eliminar participante');
+    }
   };
 
   if (loading) {
@@ -388,7 +572,7 @@ function ProjectDetail() {
           </div>
 
           <div className="sidebar-section">
-            <h3 className="sidebar-heading">👥 Participantes</h3>
+            <h3 className="sidebar-heading">Participantes</h3>
             {academicTutors.length > 0 && (
               <div className="tutor-list-sidebar">
                 <p className="tutor-category">Tutores Académicos:</p>
@@ -438,19 +622,19 @@ function ProjectDetail() {
               className={`tab ${activeTab === 'overview' ? 'active' : ''}`}
               onClick={() => setActiveTab('overview')}
             >
-              📋 Información
+              Información
             </button>
             <button 
               className={`tab ${activeTab === 'tutors' ? 'active' : ''}`}
               onClick={() => setActiveTab('tutors')}
             >
-              👥 Participantes
+              Participantes
             </button>
             <button 
               className={`tab ${activeTab === 'tasks' ? 'active' : ''}`}
               onClick={() => setActiveTab('tasks')}
             >
-              ✓ Tablero de Tareas
+              Tablero de Tareas
             </button>
           </div>
 
@@ -460,7 +644,7 @@ function ProjectDetail() {
             {activeTab === 'overview' && (
               <div className="tab-content">
                 <div className="content-card">
-                  <h2>📝 Descripción del Proyecto</h2>
+                  <h2>Descripción del Proyecto</h2>
                   <p className="project-description-full">{project.description || 'Sin descripción disponible'}</p>
                 </div>
               </div>
@@ -483,10 +667,18 @@ function ProjectDetail() {
                     {academicTutors.length > 0 ? (
                       academicTutors.map((tutor) => (
                         <div key={tutor.id} className="tutor-card">
-                          <div className="tutor-icon">🎓</div>
-                          <h4>{tutor.name}</h4>
-                          <p>{tutor.email}</p>
-                          {tutor.department && <p className="tutor-detail">{tutor.department}</p>}
+                          <div className="tutor-card-content">
+                            <h4>{tutor.name}</h4>
+                            <p>{tutor.email}</p>
+                            {tutor.department && <p className="tutor-detail">{tutor.department}</p>}
+                          </div>
+                          <button 
+                            className="btn-delete-participant"
+                            onClick={() => handleDeleteParticipant(tutor.id, 'academic')}
+                            title="Eliminar tutor"
+                          >
+                            ✕
+                          </button>
                         </div>
                       ))
                     ) : (
@@ -509,11 +701,19 @@ function ProjectDetail() {
                     {interns.length > 0 ? (
                       interns.map((intern) => (
                         <div key={intern.id} className="tutor-card">
-                          <div className="tutor-icon">👨‍💼</div>
-                          <h4>{intern.name}</h4>
-                          <p>{intern.email}</p>
-                          {intern.career && <p className="tutor-detail">{intern.career}</p>}
-                          {intern.semester && <p className="tutor-detail">Semestre {intern.semester}</p>}
+                          <div className="tutor-card-content">
+                            <h4>{intern.name}</h4>
+                            <p>{intern.email}</p>
+                            {intern.career && <p className="tutor-detail">{intern.career}</p>}
+                            {intern.semester && <p className="tutor-detail">Semestre {intern.semester}</p>}
+                          </div>
+                          <button 
+                            className="btn-delete-participant"
+                            onClick={() => handleDeleteParticipant(intern.id, 'intern')}
+                            title="Eliminar interno"
+                          >
+                            ✕
+                          </button>
                         </div>
                       ))
                     ) : (
@@ -536,9 +736,17 @@ function ProjectDetail() {
                   </div>
                   {companyTutor ? (
                     <div className="tutor-card">
-                      <div className="tutor-icon">🏢</div>
-                      <h4>{companyTutor.name}</h4>
-                      <p>{companyTutor.email}</p>
+                      <div className="tutor-card-content">
+                        <h4>{companyTutor.name}</h4>
+                        <p>{companyTutor.email}</p>
+                      </div>
+                      <button 
+                        className="btn-delete-participant"
+                        onClick={() => handleDeleteParticipant(companyTutor.id, 'company')}
+                        title="Eliminar tutor de empresa"
+                      >
+                        ✕
+                      </button>
                     </div>
                   ) : (
                     <p className="empty-message">No hay tutor de empresa asignado</p>
@@ -607,22 +815,115 @@ function ProjectDetail() {
             <h2>Agregar Participante</h2>
             <div className="modal-body-scroll">
             {participantError && <div className="modal-error">{participantError}</div>}
+            
             {/* Selector de tipo de participante */}
             <div className="participant-type-selector">
               <button 
                 className={`type-btn ${participantType === 'academic' ? 'active' : ''}`}
-                onClick={() => setParticipantType('academic')}
+                onClick={() => {
+                  setParticipantType('academic');
+                  setSelectedParticipantId(null);
+                  setSearchQuery('');
+                }}
               >
-                🎓 Tutor Académico
+                Tutor Académico
+              </button>
+              <button 
+                className={`type-btn ${participantType === 'company' ? 'active' : ''}`}
+                onClick={() => {
+                  setParticipantType('company');
+                  setSelectedParticipantId(null);
+                  setSearchQuery('');
+                }}
+              >
+                Tutor Empresa
               </button>
               <button 
                 className={`type-btn ${participantType === 'intern' ? 'active' : ''}`}
-                onClick={() => setParticipantType('intern')}
+                onClick={() => {
+                  setParticipantType('intern');
+                  setSelectedParticipantId(null);
+                  setSearchQuery('');
+                }}
               >
-                👨‍💼 Interno
+                Interno
               </button>
             </div>
 
+            {/* Modo: Añadir existente o Crear nuevo */}
+            <div className="add-mode-selector">
+              <button 
+                className={`mode-btn ${addMode === 'existing' ? 'active' : ''}`}
+                onClick={() => {
+                  setAddMode('existing');
+                  setParticipantError('');
+                }}
+              >
+                Añadir Existente
+              </button>
+              <button 
+                className={`mode-btn ${addMode === 'create' ? 'active' : ''}`}
+                onClick={() => {
+                  setAddMode('create');
+                  setParticipantError('');
+                  setSelectedParticipantId(null);
+                }}
+              >
+                Crear Nuevo
+              </button>
+            </div>
+
+            {/* Modo: AÑADIR EXISTENTE */}
+            {addMode === 'existing' && (
+              <>
+                <div className="search-container">
+                  <input
+                    type="text"
+                    placeholder={`Buscar por nombre o email...`}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="modal-input search-input"
+                  />
+                </div>
+
+                <div className="participants-list">
+                  {availableParticipants.length > 0 ? (
+                    availableParticipants
+                      .filter(p => 
+                        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        p.email.toLowerCase().includes(searchQuery.toLowerCase())
+                      )
+                      .map((participant) => (
+                        <div 
+                          key={participant.id} 
+                          className={`participant-item ${selectedParticipantId === participant.id ? 'selected' : ''}`}
+                          onClick={() => setSelectedParticipantId(participant.id)}
+                        >
+                          <div className="participant-info">
+                            <div className="participant-details">
+                              <strong>{participant.name}</strong>
+                              <span className="participant-email">{participant.email}</span>
+                              {participant.career && <span className="participant-extra">{participant.career}</span>}
+                              {participant.department && <span className="participant-extra">{participant.department}</span>}
+                            </div>
+                          </div>
+                          {selectedParticipantId === participant.id && (
+                            <div className="selected-check">✓</div>
+                          )}
+                        </div>
+                      ))
+                  ) : (
+                    <p className="empty-search">
+                      No hay {participantType === 'academic' ? 'tutores académicos' : 'internos'} disponibles para añadir
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* Modo: CREAR NUEVO */}
+            {addMode === 'create' && (
+              <>
             {/* Formulario común */}
             <input
               type="text"
@@ -674,10 +975,44 @@ function ProjectDetail() {
                   onChange={(e) => setParticipantForm({...participantForm, semester: e.target.value})}
                   className="modal-input"
                 />
+                
+                {/* Selector de Tutor Académico */}
+                <div className="tutor-selector">
+                  <label htmlFor="academicTutor">Tutor Académico *</label>
+                  <select
+                    id="academicTutor"
+                    value={participantForm.academyTutorId ?? ''}
+                    onChange={(e) => setParticipantForm({...participantForm, academyTutorId: e.target.value ? Number(e.target.value) : null})}
+                    className="modal-input"
+                    required
+                  >
+                    <option value="">-- Seleccionar tutor académico --</option>
+                    {academicTutors.map((tutor) => (
+                      <option key={tutor.id} value={tutor.id}>{tutor.name}</option>
+                    ))}
+                  </select>
+                  {academicTutors.length === 0 && (
+                    <small style={{color: '#f59e0b'}}>No hay tutores académicos. Agrega uno primero.</small>
+                  )}
+                </div>
+
+                {/* Selector de Tutor de Empresa */}
+                <div className="tutor-selector">
+                  <label htmlFor="companyTutor">Tutor de Empresa *</label>
+                  {companyTutor ? (
+                    <div className="selected-tutor">
+                      <span>{companyTutor.name}</span>
+                      <small>(Asignado al proyecto)</small>
+                    </div>
+                  ) : (
+                    <small style={{color: '#f59e0b'}}>No hay tutor de empresa. Asigna uno al proyecto primero.</small>
+                  )}
+                </div>
               </>
             )}
 
-            {/* Selector de Universidad */}
+            {/* Selector de Universidad (solo para modo crear) */}
+            {addMode === 'create' && (participantType === 'academic' || participantType === 'intern') && (
             <div className="university-selector">
               <label htmlFor="university">Universidad</label>
               <div className="university-row">
@@ -696,15 +1031,19 @@ function ProjectDetail() {
                 </button>
               </div>
             </div>
+            )}
+            </>
+            )}
 
+            </div>
+            
             <div className="modal-actions">
               <button className="btn-cancel" onClick={() => setShowAddParticipantModal(false)}>
                 Cancelar
               </button>
               <button className="btn-submit" onClick={handleAddParticipant}>
-                Agregar {participantType === 'academic' ? 'Tutor' : 'Interno'}
+                {addMode === 'existing' ? 'Añadir' : 'Crear'} {participantType === 'academic' ? 'Tutor' : 'Interno'}
               </button>
-            </div>
             </div>
           </div>
         </div>

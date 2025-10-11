@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.dto.AcademyTutorDTO;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.AcademyTutor;
+import com.informationconfig.spring.bootcamp.bootcamp_proyect.models.Universities;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.AcademyTutorRepository;
 import com.informationconfig.spring.bootcamp.bootcamp_proyect.repository.UniversitiesRepository;
 
@@ -36,6 +37,11 @@ public class AcademyTutorService {
             throw new RuntimeException("Ya existe un tutor académico con el ID: " + dto.getId());
         }
         
+        // Validar que universityId sea obligatorio
+        if (dto.getUniversityId() == null) {
+            throw new RuntimeException("El campo universityId es obligatorio para un tutor académico");
+        }
+        
         AcademyTutor academyTutor = new AcademyTutor();
         
         academyTutor.setName(dto.getName());
@@ -43,10 +49,10 @@ public class AcademyTutorService {
         academyTutor.setPassword(passwordEncoder.encode(dto.getPassword()));
         academyTutor.setDepartment(dto.getDepartment());
 
-        if (dto.getUniversityId() != null) {
-         universitiesRepository.findById(dto.getUniversityId())
-        .ifPresent(academyTutor::setUniversity);
-}
+        // Asociar university (obligatoria - ya validada arriba)
+        Universities university = universitiesRepository.findById(dto.getUniversityId())
+            .orElseThrow(() -> new RuntimeException("Universidad con ID " + dto.getUniversityId() + " no encontrada"));
+        academyTutor.setUniversity(university);
 
         return academyTutorRepository.save(academyTutor);
     }

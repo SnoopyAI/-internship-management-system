@@ -138,7 +138,7 @@ function Participants() {
       <main className="participants-main">
         <div className="page-header">
           <div>
-            <h1>👥 Participantes</h1>
+            <h1>Participantes</h1>
             <p className="page-subtitle">
               Total: {participants.length} participantes
             </p>
@@ -158,25 +158,25 @@ function Participants() {
               className={`filter-btn ${filter === 'academic' ? 'active' : ''}`}
               onClick={() => setFilter('academic')}
             >
-              🎓 Tutores Académicos ({academicTutors.length})
+              Tutores Académicos ({academicTutors.length})
             </button>
             <button 
               className={`filter-btn ${filter === 'company' ? 'active' : ''}`}
               onClick={() => setFilter('company')}
             >
-              🏢 Tutores de Empresa ({companyTutors.length})
+              Tutores de Empresa ({companyTutors.length})
             </button>
             <button 
               className={`filter-btn ${filter === 'intern' ? 'active' : ''}`}
               onClick={() => setFilter('intern')}
             >
-              👨‍💼 Internos ({interns.length})
+              Internos ({interns.length})
             </button>
           </div>
 
           <input
             type="text"
-            placeholder="🔍 Buscar por nombre o email..."
+            placeholder="Buscar por nombre o email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
@@ -188,7 +188,6 @@ function Participants() {
           {participants.length > 0 ? (
             participants.map((participant) => (
               <div key={`${participant.type}-${participant.id}`} className="participant-card">
-                <div className="participant-icon">{participant.icon}</div>
                 <div className="participant-info">
                   <h3>{participant.name}</h3>
                   <p className="participant-email">{participant.email}</p>
@@ -196,16 +195,16 @@ function Participants() {
                     {participant.typeLabel}
                   </span>
                   {participant.department && (
-                    <p className="participant-detail">📚 {participant.department}</p>
+                    <p className="participant-detail">{participant.department}</p>
                   )}
                   {participant.position && (
-                    <p className="participant-detail">💼 {participant.position}</p>
+                    <p className="participant-detail">{participant.position}</p>
                   )}
                   {participant.career && (
-                    <p className="participant-detail">🎯 {participant.career}</p>
+                    <p className="participant-detail">{participant.career}</p>
                   )}
                   {participant.semester && (
-                    <p className="participant-detail">📅 Semestre {participant.semester}</p>
+                    <p className="participant-detail">Semestre {participant.semester}</p>
                   )}
                 </div>
               </div>

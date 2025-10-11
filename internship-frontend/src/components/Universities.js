@@ -164,7 +164,7 @@ function Universities() {
       <main className="universities-main">
         <div className="page-header">
           <div>
-            <h1>🎓 Universidades</h1>
+            <h1>Universidades</h1>
             <p className="page-subtitle">Gestiona las universidades del sistema</p>
           </div>
           <button className="btn-primary" onClick={() => setShowAddModal(true)}>
@@ -176,7 +176,7 @@ function Universities() {
         <div className="search-bar">
           <input
             type="text"
-            placeholder="🔍 Buscar universidad..."
+            placeholder="Buscar universidad..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
@@ -188,7 +188,6 @@ function Universities() {
           {filteredUniversities.length > 0 ? (
             filteredUniversities.map((university) => (
               <div key={university.id} className="university-card">
-                <div className="university-icon">🏛️</div>
                 <h3>{university.name}</h3>
                 <div className="university-actions">
                   <button 

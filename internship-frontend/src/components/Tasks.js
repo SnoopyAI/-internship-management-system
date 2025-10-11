@@ -107,7 +107,7 @@ function Tasks() {
       <main className="tasks-main">
         <div className="page-header">
           <div>
-            <h1>✓ Mis Tareas</h1>
+            <h1>Mis Tareas</h1>
             <p className="page-subtitle">
               {filteredTasks.length} tareas {filter !== 'all' ? `- ${getStatusLabel(filter)}` : ''}
             </p>
@@ -127,25 +127,25 @@ function Tasks() {
               className={`filter-btn ${filter === 'pending' ? 'active' : ''}`}
               onClick={() => setFilter('pending')}
             >
-              📋 Pendientes ({tasks.filter(t => t.status === 'pending').length})
+              Pendientes ({tasks.filter(t => t.status === 'pending').length})
             </button>
             <button 
               className={`filter-btn ${filter === 'progress' ? 'active' : ''}`}
               onClick={() => setFilter('progress')}
             >
-              🔄 En Progreso ({tasks.filter(t => t.status === 'progress').length})
+              En Progreso ({tasks.filter(t => t.status === 'progress').length})
             </button>
             <button 
               className={`filter-btn ${filter === 'completed' ? 'active' : ''}`}
               onClick={() => setFilter('completed')}
             >
-              ✅ Completadas ({tasks.filter(t => t.status === 'completed').length})
+              Completadas ({tasks.filter(t => t.status === 'completed').length})
             </button>
           </div>
 
           <input
             type="text"
-            placeholder="🔍 Buscar tareas..."
+            placeholder="Buscar tareas..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
