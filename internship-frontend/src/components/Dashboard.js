@@ -7,7 +7,6 @@ function Dashboard() {
   const [userEmail, setUserEmail] = useState('');
   const [userRoles, setUserRoles] = useState([]);
   const [boards, setBoards] = useState([]);
-  const [recentTasks, setRecentTasks] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -32,7 +31,6 @@ function Dashboard() {
 
     // Cargar proyectos reales del backend
     loadBoards();
-    loadMockTasks();
     
     // Simular un pequeño delay para mostrar el loading
     setTimeout(() => {
@@ -66,16 +64,6 @@ function Dashboard() {
     } catch (err) {
       console.error('Error al conectar con el servidor:', err);
     }
-  };
-
-  const loadMockTasks = () => {
-    // Datos de ejemplo para tareas recientes
-    setRecentTasks([
-      { id: 1, title: 'Implementar login', status: 'Completada', priority: 'high' },
-      { id: 2, title: 'Diseñar dashboard', status: 'En progreso', priority: 'high' },
-      { id: 3, title: 'Revisar código', status: 'Pendiente', priority: 'medium' },
-      { id: 4, title: 'Documentar API', status: 'Pendiente', priority: 'low' }
-    ]);
   };
 
   const handleCreateProject = async (e) => {
@@ -135,6 +123,31 @@ function Dashboard() {
     window.location.href = '/';
   };
 
+  const handleDeleteBoard = async (boardId, boardName) => {
+    if (!window.confirm(`¿Estás seguro de eliminar el proyecto "${boardName}"? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    try {
+      const credentials = localStorage.getItem('authCredentials');
+      const response = await fetch(`http://localhost:8080/boards/${boardId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Basic ${credentials}`
+        }
+      });
+
+      if (response.ok) {
+        await loadBoards();
+      } else {
+        alert('Error al eliminar el proyecto');
+      }
+    } catch (error) {
+      console.error('Error deleting board:', error);
+      alert('Error al eliminar el proyecto');
+    }
+  };
+
   const getUserRole = () => {
     if (userRoles.length === 0) return 'Usuario';
     const role = userRoles[0].authority || '';
@@ -142,24 +155,6 @@ function Dashboard() {
     if (role.includes('ACADEMY')) return 'Tutor Académico';
     if (role.includes('INTERN')) return 'Pasante';
     return 'Usuario';
-  };
-
-  const getStatusClass = (status) => {
-    switch(status) {
-      case 'Completada': return 'status-completed';
-      case 'En progreso': return 'status-progress';
-      case 'Pendiente': return 'status-pending';
-      default: return '';
-    }
-  };
-
-  const getPriorityIcon = (priority) => {
-    switch(priority) {
-      case 'high': return '🔴';
-      case 'medium': return '🟡';
-      case 'low': return '🟢';
-      default: return '⚪';
-    }
   };
 
   const getRandomColor = () => {
@@ -236,6 +231,16 @@ function Dashboard() {
                     <button className="btn-view" onClick={() => navigate(`/project/${board.id}`)}>
                       Ver proyecto →
                     </button>
+                    <button 
+                      className="btn-delete-board" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteBoard(board.id, board.name);
+                      }}
+                      title="Eliminar proyecto"
+                    >
+                      Eliminar
+                    </button>
                   </div>
                 </div>
               ))
@@ -280,56 +285,6 @@ function Dashboard() {
             </div>
           </div>
         )}
-
-        {/* Recent Tasks Section */}
-        <section className="tasks-section">
-          <div className="section-header">
-            <h2>Tareas Recientes</h2>
-          </div>
-
-          <div className="tasks-list">
-            {recentTasks.map(task => (
-              <div key={task.id} className="task-item">
-                <div className="task-checkbox">
-                  <input type="checkbox" checked={task.status === 'Completada'} readOnly />
-                </div>
-                <div className="task-content">
-                  <h4>{task.title}</h4>
-                  <span className={`task-status ${getStatusClass(task.status)}`}>
-                    {task.status}
-                  </span>
-                </div>
-                <div className="task-priority">
-                  <span className={`priority-badge priority-${task.priority}`}>
-                    {task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Media' : 'Baja'}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Quick Stats */}
-        <section className="stats-section">
-          <div className="stat-card">
-            <div className="stat-content">
-              <h3>15</h3>
-              <p>Tareas Activas</p>
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-content">
-              <h3>10</h3>
-              <p>Completadas</p>
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-content">
-              <h3>75%</h3>
-              <p>Progreso</p>
-            </div>
-          </div>
-        </section>
       </main>
     </div>
   );

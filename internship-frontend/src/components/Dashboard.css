@@ -356,6 +356,30 @@
   background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
 }
 
+.btn-delete-board {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-delete-board:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  transform: translateY(-1px);
+}
+
+.board-footer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 /* Tasks Section */
 .tasks-section {
   margin-bottom: 30px;

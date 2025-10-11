@@ -51,9 +51,11 @@ function ProjectDetail() {
     title: '',
     description: '',
     dueDate: '',
-    status: 'To Do'
+    status: 'To Do',
+    assignedInternIds: []
   });
   const [showEditTaskModal, setShowEditTaskModal] = useState(false);
+  const [showViewTaskModal, setShowViewTaskModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   
   // Estados para editar board
@@ -412,10 +414,10 @@ function ProjectDetail() {
   // ========== FUNCIONES DE LISTAS ==========
   const loadLists = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const credentials = localStorage.getItem('authCredentials');
       const response = await fetch(`http://localhost:8080/lists/board/${id}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Basic ${credentials}`
         }
       });
 
@@ -426,7 +428,7 @@ function ProjectDetail() {
         const listsWithTasks = await Promise.all(
           listsData.map(async (list) => {
             const tasksResponse = await fetch(`http://localhost:8080/tasks/list/${list.id}`, {
-              headers: { 'Authorization': `Bearer ${token}` }
+              headers: { 'Authorization': `Basic ${credentials}` }
             });
             const tasks = tasksResponse.ok ? await tasksResponse.json() : [];
             return { ...list, tasks };
@@ -447,11 +449,11 @@ function ProjectDetail() {
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const credentials = localStorage.getItem('authCredentials');
       const response = await fetch('http://localhost:8080/lists/add', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Basic ${credentials}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -479,11 +481,11 @@ function ProjectDetail() {
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const credentials = localStorage.getItem('authCredentials');
       const response = await fetch(`http://localhost:8080/lists/${listId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Basic ${credentials}`
         }
       });
 
@@ -506,37 +508,56 @@ function ProjectDetail() {
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const credentials = localStorage.getItem('authCredentials');
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      
+      const taskData = {
+        title: taskForm.title,
+        description: taskForm.description,
+        dueDate: taskForm.dueDate || null,
+        status: taskForm.status || 'To Do',
+        listId: selectedListId,
+        createdByTutorId: userData.id || 1,
+        internsId: taskForm.assignedInternIds || []
+      };
+      
+      console.log('Creating task with data:', taskData);
       
       const response = await fetch('http://localhost:8080/tasks/add', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Basic ${credentials}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          title: taskForm.title,
-          description: taskForm.description,
-          dueDate: taskForm.dueDate || null,
-          status: taskForm.status || 'To Do',
-          listId: selectedListId,
-          createdByTutorId: userData.id || 1,
-          internIds: []
-        })
+        body: JSON.stringify(taskData)
       });
 
+      console.log('Response status:', response.status);
+
       if (!response.ok) {
-        throw new Error('Error al crear la tarea');
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Error al crear la tarea: ${response.status} - ${errorText}`);
       }
 
-      setTaskForm({ title: '', description: '', dueDate: '', status: 'To Do' });
+      setTaskForm({ 
+        title: '', 
+        description: '', 
+        dueDate: '', 
+        status: 'To Do',
+        assignedInternIds: []
+      });
       setShowAddTaskModal(false);
       await loadLists();
     } catch (error) {
       console.error('Error creating task:', error);
-      alert('Error al crear la tarea');
+      alert('Error al crear la tarea: ' + error.message);
     }
+  };
+
+  const handleViewTask = (task) => {
+    setSelectedTask(task);
+    setShowViewTaskModal(true);
   };
 
   const handleEditTask = (task) => {
@@ -545,8 +566,10 @@ function ProjectDetail() {
       title: task.title,
       description: task.description || '',
       dueDate: task.dueDate || '',
-      status: task.status || 'To Do'
+      status: task.status || 'To Do',
+      assignedInternIds: task.internsId || []
     });
+    setShowViewTaskModal(false);
     setShowEditTaskModal(true);
   };
 
@@ -557,35 +580,51 @@ function ProjectDetail() {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:8080/tasks/${selectedTask.taskId}`, {
+      const credentials = localStorage.getItem('authCredentials');
+      
+      const updateData = {
+        title: taskForm.title,
+        description: taskForm.description,
+        dueDate: taskForm.dueDate || null,
+        status: taskForm.status,
+        listId: selectedTask.listId,
+        createdByTutorId: selectedTask.createdByTutorId,
+        internsId: taskForm.assignedInternIds || []  // ← Cambiado de internIds a internsId
+      };
+      
+      console.log('Updating task with data:', updateData);
+      console.log('Task ID:', selectedTask.id);
+      
+      const response = await fetch(`http://localhost:8080/tasks/${selectedTask.id}`, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Basic ${credentials}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          title: taskForm.title,
-          description: taskForm.description,
-          dueDate: taskForm.dueDate || null,
-          status: taskForm.status,
-          listId: selectedTask.listId,
-          createdByTutorId: selectedTask.createdByTutorId,
-          internIds: selectedTask.internIds || []
-        })
+        body: JSON.stringify(updateData)
       });
 
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error('Error al actualizar la tarea');
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Error al actualizar la tarea: ${response.status} - ${errorText}`);
       }
 
-      setTaskForm({ title: '', description: '', dueDate: '', status: 'To Do' });
+      setTaskForm({ 
+        title: '', 
+        description: '', 
+        dueDate: '', 
+        status: 'To Do',
+        assignedInternIds: []
+      });
       setShowEditTaskModal(false);
       setSelectedTask(null);
       await loadLists();
     } catch (error) {
       console.error('Error updating task:', error);
-      alert('Error al actualizar la tarea');
+      alert('Error al actualizar la tarea: ' + error.message);
     }
   };
 
@@ -595,11 +634,11 @@ function ProjectDetail() {
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const credentials = localStorage.getItem('authCredentials');
       const response = await fetch(`http://localhost:8080/tasks/${taskId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Basic ${credentials}`
         }
       });
 
@@ -916,18 +955,18 @@ function ProjectDetail() {
                         <div className="tasks-list">
                           {list.tasks && list.tasks.length > 0 ? (
                             list.tasks.map((task) => (
-                              <div key={task.taskId} className="task-item" onClick={() => handleEditTask(task)}>
+                              <div key={task.id} className="task-item" onClick={() => handleViewTask(task)}>
                                 <div className="task-content">
                                   <h4>{task.title}</h4>
-                                  <span className={`task-status status-${task.status.toLowerCase().replace(' ', '-')}`}>
-                                    {task.status}
+                                  <span className={`task-status status-${(task.status || 'pending').toLowerCase().replace(' ', '-')}`}>
+                                    {task.status || 'Pending'}
                                   </span>
                                 </div>
                                 <button 
                                   className="btn-delete-task"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleDeleteTask(task.taskId);
+                                    handleDeleteTask(task.id);
                                   }}
                                   title="Eliminar tarea"
                                 >
@@ -1112,6 +1151,42 @@ function ProjectDetail() {
                 <option value="In Progress">En Progreso</option>
                 <option value="Done">Completada</option>
               </select>
+              
+              <div className="intern-selection-section">
+                <label className="selection-label">Asignar a:</label>
+                <div className="participants-list">
+                  {interns && interns.length > 0 ? (
+                    interns.map((intern) => (
+                      <div key={intern.id} className="participant-item">
+                        <input
+                          type="checkbox"
+                          id={`add-intern-${intern.id}`}
+                          checked={(taskForm.assignedInternIds || []).includes(intern.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setTaskForm({
+                                ...taskForm,
+                                assignedInternIds: [...(taskForm.assignedInternIds || []), intern.id]
+                              });
+                            } else {
+                              setTaskForm({
+                                ...taskForm,
+                                assignedInternIds: (taskForm.assignedInternIds || []).filter(id => id !== intern.id)
+                              });
+                            }
+                          }}
+                        />
+                        <label htmlFor={`add-intern-${intern.id}`}>
+                          {intern.name} {intern.surname}
+                        </label>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="empty-message-small">No hay internos disponibles</p>
+                  )}
+                </div>
+              </div>
+
               <div className="modal-actions">
                 <button className="btn-cancel" onClick={() => setShowAddTaskModal(false)}>
                   Cancelar
@@ -1160,12 +1235,113 @@ function ProjectDetail() {
                 <option value="In Progress">En Progreso</option>
                 <option value="Done">Completada</option>
               </select>
+
+              <div className="intern-selection-section">
+                <label className="selection-label">Asignar a:</label>
+                <div className="participants-list">
+                  {interns && interns.length > 0 ? (
+                    interns.map((intern) => (
+                      <div key={intern.id} className="participant-item">
+                        <input
+                          type="checkbox"
+                          id={`edit-intern-${intern.id}`}
+                          checked={(taskForm.assignedInternIds || []).includes(intern.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setTaskForm({
+                                ...taskForm,
+                                assignedInternIds: [...(taskForm.assignedInternIds || []), intern.id]
+                              });
+                            } else {
+                              setTaskForm({
+                                ...taskForm,
+                                assignedInternIds: (taskForm.assignedInternIds || []).filter(id => id !== intern.id)
+                              });
+                            }
+                          }}
+                        />
+                        <label htmlFor={`edit-intern-${intern.id}`}>
+                          {intern.name} {intern.surname}
+                        </label>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="empty-message-small">No hay internos disponibles</p>
+                  )}
+                </div>
+              </div>
+
               <div className="modal-actions">
                 <button className="btn-cancel" onClick={() => setShowEditTaskModal(false)}>
                   Cancelar
                 </button>
                 <button className="btn-submit" onClick={handleUpdateTask}>
                   Guardar Cambios
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: View Task */}
+      {showViewTaskModal && selectedTask && (
+        <div className="modal-overlay" onClick={() => setShowViewTaskModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Detalles de la Tarea</h2>
+            <div className="modal-body-scroll">
+              <div className="view-task-field">
+                <label>Título</label>
+                <p>{selectedTask.title}</p>
+              </div>
+              <div className="view-task-field">
+                <label>Descripción</label>
+                <p>{selectedTask.description || 'Sin descripción'}</p>
+              </div>
+              <div className="view-task-field">
+                <label>Fecha de vencimiento</label>
+                <p>{selectedTask.dueDate || 'Sin fecha'}</p>
+              </div>
+              <div className="view-task-field">
+                <label>Estado</label>
+                <p>
+                  <span className={`task-status status-${(selectedTask.status || 'pending').toLowerCase().replace(' ', '-')}`}>
+                    {selectedTask.status || 'Pending'}
+                  </span>
+                </p>
+              </div>
+              <div className="view-task-field">
+                <label>Asignada a</label>
+                <div className="assigned-interns-list">
+                  {selectedTask.internsId && selectedTask.internsId.length > 0 ? (
+                    selectedTask.internsId.map((internId) => {
+                      const intern = interns.find(i => i.id === internId);
+                      return intern ? (
+                        <span key={internId} className="assigned-intern-tag">
+                          {intern.name} {intern.surname}
+                        </span>
+                      ) : null;
+                    })
+                  ) : (
+                    <p>Sin asignar</p>
+                  )}
+                </div>
+              </div>
+              <div className="modal-actions">
+                <button className="btn-cancel" onClick={() => setShowViewTaskModal(false)}>
+                  Cerrar
+                </button>
+                <button className="btn-submit" onClick={() => handleEditTask(selectedTask)}>
+                  Editar
+                </button>
+                <button 
+                  className="btn-delete" 
+                  onClick={() => {
+                    setShowViewTaskModal(false);
+                    handleDeleteTask(selectedTask.id);
+                  }}
+                >
+                  Eliminar
                 </button>
               </div>
             </div>

@@ -10,29 +10,29 @@ public class Intern extends User {
 
     
 
-    @Column(name = "career", length = 100, nullable = false)
+    @Column(name = "career", length = 100)
     private String career;
     
-    @Column(name = "semester", nullable = false)
+    @Column(name = "semester")
     private Integer semester;
 
     @ManyToMany(mappedBy = "interns")
     private List<Task> tasks = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "board_id", nullable = false, foreignKey = @ForeignKey(name = "FK_BOARD_INTERN"))
+    @JoinColumn(name = "board_id", foreignKey = @ForeignKey(name = "FK_BOARD_INTERN"))
     private Board board;
 
     @ManyToOne
-    @JoinColumn(name = "academy_tutor_id", nullable = false, foreignKey = @ForeignKey(name = "FK_ACADEMY_TUTOR_INTERN"))
+    @JoinColumn(name = "academy_tutor_id", foreignKey = @ForeignKey(name = "FK_ACADEMY_TUTOR_INTERN"))
     private AcademyTutor academyTutor;
 
     @ManyToOne
-    @JoinColumn(name = "company_tutor_id", nullable = false, foreignKey = @ForeignKey(name = "FK_COMPANY_TUTOR_INTERN"))
+    @JoinColumn(name = "company_tutor_id", foreignKey = @ForeignKey(name = "FK_COMPANY_TUTOR_INTERN"))
     private CompanyTutor companyTutor;
 
     @ManyToOne
-    @JoinColumn(name = "university_id", nullable = false, foreignKey = @ForeignKey(name = "FK_UNIVERSITY_INTERN"))
+    @JoinColumn(name = "university_id", foreignKey = @ForeignKey(name = "FK_UNIVERSITY_INTERN"))
     private Universities university;
 
 
