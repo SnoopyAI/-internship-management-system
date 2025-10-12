@@ -118,7 +118,22 @@ public Task addTask(TaskRequestDTO dto, Integer tutorId) {
             if (dto.getAssignTo() != null) {
                 task.setAssingTo(dto.getAssignTo());
             }
-            // Note: List and intern relationships should be updated through dedicated endpoints
+            
+            // Actualizar internos asignados
+            if (dto.getInternsId() != null) {
+                System.out.println("DEBUG UPDATE: Lista de internIds recibida: " + dto.getInternsId());
+                List<Intern> interns = new ArrayList<>();
+                if (!dto.getInternsId().isEmpty()) {
+                    System.out.println("DEBUG UPDATE: Buscando " + dto.getInternsId().size() + " internos...");
+                    interns = internRepository.findAllById(dto.getInternsId());
+                    System.out.println("DEBUG UPDATE: Encontrados " + interns.size() + " internos");
+                    if (interns.size() != dto.getInternsId().size()) {
+                        throw new RuntimeException("Uno o más internos no existen.");
+                    }
+                }
+                System.out.println("DEBUG UPDATE: Asociando " + interns.size() + " internos a la tarea");
+                task.setInterns(interns);
+            }
             
             return taskRepository.save(task);
         }
